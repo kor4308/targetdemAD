@@ -126,7 +126,26 @@ bonus_values = []
 if recruitment_strategy == "Return personal results" and family_history == "Yes":
     bonus_labels.append("Return Results")
     bonus_values.append(20)
+
 if childcare_services == "Yes":
     bonus_labels.append("Childcare")
     bonus_values.append({"Spousal": 2, "Son/Daughter": 15, "Non-Family": 8}[study_partner])
+
 if cultural_practices == "Yes":
+    bonus_labels.append("Cultural Practices")
+    bonus_values.append(2 if race == "White" else 8)
+
+if emphasize_generations == "Yes":
+    bonus_labels.append("Generational Messaging")
+    bonus_values.append(6 if family_history == "Yes" or race == "African American" else 3)
+
+if bonus_labels:
+    bonus_fig = go.Figure([go.Bar(x=bonus_labels, y=bonus_values)])
+    bonus_fig.update_layout(
+        yaxis=dict(range=[0, max(bonus_values) + 10]),
+        title="Bonus Contribution from Recruitment Strategies",
+        height=400
+    )
+    st.plotly_chart(bonus_fig)
+else:
+    st.write("No recruitment strategy bonuses selected.")
