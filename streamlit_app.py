@@ -4,18 +4,7 @@ import plotly.graph_objects as go
 # ---------- Demographic Gap Analyzer ----------
 st.title("Alzheimer's Disease Persona & Recruitment Analyzer")
 
-# ---------- Trial Characteristics ----------
-st.markdown("## 🧪 Trial Characteristics")
-
-trial_col1, trial_col2, trial_col3 = st.columns(3)
-with trial_col1:
-    lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"])
-with trial_col2:
-    pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"])
-with trial_col3:
-    study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"])
-
-st.markdown("## 🌟 Target vs. Current Enrollment")
+st.markdown("## 🎯 Target vs. Current Enrollment")
 
 # --- Gender Input ---
 st.subheader("Gender Distribution")
@@ -75,8 +64,6 @@ if gender_gap["Female"] > 5:
     st.write("- Collaborate with women-led organizations")
     st.write("- Emphasize legacy/future generation impact")
     st.write("- Offer flexible scheduling and childcare")
-    if lp_required == "Yes":
-        st.warning("Female underrepresentation combined with lumbar puncture requirement may cause fear or confusion. Provide educational materials explaining the difference between lumbar punctures and epidurals to reduce anxiety and improve trust.")
 
 for race, gap in race_gap.items():
     if gap > 5:
@@ -90,75 +77,23 @@ for race, gap in race_gap.items():
 st.markdown("---")
 st.header("🧠 Individual Persona Radar Chart")
 
-left_col, right_col = st.columns([1, 2])
+race = st.selectbox("Race", races)
+gender = st.selectbox("Gender", ["Male", "Female"])
+family_history = st.selectbox("Family History of Alzheimer's", ["Yes", "No"])
+study_partner = st.selectbox("Type of Study Partner", ["Spousal", "Son/Daughter", "Non-Family"])
+recruitment_strategy = st.selectbox("Return Personal Results?", ["Do not return personal results", "Return personal results"])
+childcare_services = st.selectbox("Provide Childcare Services?", ["No", "Yes"])
+cultural_practices = st.selectbox("Recruitment Leverages Cultural Practices?", ["No", "Yes"])
+emphasize_generations = st.selectbox("Emphasize Impact on Future Generations?", ["No", "Yes"])
 
-with left_col:
-    st.subheader("Persona Characteristics")
-    race = st.selectbox("Race", races)
-    gender = st.selectbox("Gender", ["Male", "Female"])
-    family_history = st.selectbox("Family History of Alzheimer's", ["Yes", "No"])
-    study_partner = st.selectbox("Type of Study Partner", ["Spousal", "Son/Daughter", "Non-Family"])
-    recruitment_strategy = st.selectbox("Return Personal Results?", ["Do not return personal results", "Return personal results"])
-    childcare_services = st.selectbox("Provide Childcare Services?", ["No", "Yes"])
-    cultural_practices = st.selectbox("Recruitment Leverages Cultural Practices?", ["No", "Yes"])
-    emphasize_generations = st.selectbox("Emphasize Impact on Future Generations?", ["No", "Yes"])
+# Persona scoring
+race_score = {"White": 80, "African American": 40, "Hispanic": 50, "Asian": 50, "Other": 50}[race]
+gender_score = 65 if gender == "Male" else 45
+family_score = 80 if family_history == "Yes" else 20
+partner_score = {"Spousal": 85, "Son/Daughter": 60, "Non-Family": 40}[study_partner]
 
-with right_col:
-    st.subheader("Recruitment Strategy Effects")
-
-    base_scores = {
-        "Race": {"White": 80, "African American": 40, "Hispanic": 50, "Asian": 50, "Other": 50}[race],
-        "Gender": 65 if gender == "Male" else 45,
-        "Family History": 80 if family_history == "Yes" else 20,
-        "Study Partner": {"Spousal": 85, "Son/Daughter": 60, "Non-Family": 40}[study_partner]
-    }
-
-    # Apply bonuses
-    race_score = base_scores["Race"]
-    gender_score = base_scores["Gender"]
-    family_score = base_scores["Family History"]
-    partner_score = base_scores["Study Partner"]
-
-    score_explanations = []
-
-    if recruitment_strategy == "Return personal results" and family_history == "Yes":
-        family_score += 20
-        score_explanations.append("✅ Returning personal results increased family history score by 20.")
-
-    if childcare_services == "Yes":
-        bonus = {"Spousal": 2, "Son/Daughter": 15, "Non-Family": 8}[study_partner]
-        partner_score += bonus
-        score_explanations.append(f"✅ Childcare services increased study partner score by {bonus}.")
-
-    if cultural_practices == "Yes":
-        bonus = 2 if race == "White" else 8
-        race_score += bonus
-        score_explanations.append(f"✅ Cultural practice alignment increased race score by {bonus}.")
-
-    if emphasize_generations == "Yes":
-        bonus = 6 if family_history == "Yes" or race == "African American" else 3
-        race_score += bonus
-        score_explanations.append(f"✅ Emphasis on future generations increased race score by {bonus}.")
-
-    st.write("### Score Impact Summary")
-    for explanation in score_explanations:
-        st.success(explanation)
-    race_score = {"White": 80, "African American": 40, "Hispanic": 50, "Asian": 50, "Other": 50}[race]
-    gender_score = 65 if gender == "Male" else 45
-    family_score = 80 if family_history == "Yes" else 20
-    partner_score = {"Spousal": 85, "Son/Daughter": 60, "Non-Family": 40}[study_partner]
-
-    if recruitment_strategy == "Return personal results" and family_history == "Yes":
-        family_score += 20
-    if childcare_services == "Yes":
-        partner_score += {"Spousal": 2, "Son/Daughter": 15, "Non-Family": 8}[study_partner]
-    if cultural_practices == "Yes":
-        race_score += 2 if race == "White" else 8
-    if emphasize_generations == "Yes":
-        race_score += 6 if family_history == "Yes" or race == "African American" else 3
-
-    # Persona scoring
-scores = [min(100, race_score), min(100, gender_score), min(100, family_score), min(100, partner_score)]
+# Final score (without recruitment bonuses)
+scores = [race_score, gender_score, family_score, partner_score]
 total_score = sum(scores) / 4
 
 # Radar chart
@@ -181,3 +116,17 @@ fig.update_layout(
 
 st.plotly_chart(fig)
 st.subheader(f"Total Score: {total_score:.1f}")
+
+# ---------- Bonus Strategy Bar Chart ----------
+st.header("📈 Recruitment Strategy Bonuses")
+
+bonus_labels = []
+bonus_values = []
+
+if recruitment_strategy == "Return personal results" and family_history == "Yes":
+    bonus_labels.append("Return Results")
+    bonus_values.append(20)
+if childcare_services == "Yes":
+    bonus_labels.append("Childcare")
+    bonus_values.append({"Spousal": 2, "Son/Daughter": 15, "Non-Family": 8}[study_partner])
+if cultural_practices == "Yes":
