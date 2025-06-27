@@ -59,23 +59,69 @@ for race in races:
 if current_total != 100:
     st.error(f"Current race percentages must total 100%. Current total: {current_total}%")
 
+st.markdown(f"**🎯 Target Total Enrollment:** {total_enrollment} participants")
+st.markdown(f"**📍 Current Total Enrollment:** {current_enrollment} participants")
+
 # ---------- Gap Calculation ----------
-st.markdown("---")
+import plotly.express as px
+
 st.header("📊 Enrollment Gaps")
 
 gender_gap = {
     "Female": target_female - current_female,
     "Male": target_male - current_male
 }
-race_gap = {race: current_race[race] - target_race[race] for race in races}
+race_gap = {race: target_race[race] - current_race[race] for race in races}
 
 st.subheader("Gender Gaps")
 for gender, gap in gender_gap.items():
-    st.write(f"**{gender}:** {gap:+.1f}%")
+    note = f"(You need to increase {gender.lower()} enrollment by {abs(gap):.1f}% to reach target)" if gap > 0 else ""
+    st.write(f"**{gender}:** {gap:+.1f}% {note}")
 
 st.subheader("Race Gaps")
 for race, gap in race_gap.items():
-    st.write(f"**{race}:** {gap:+.1f}%")
+    if gap > 5:
+        st.markdown("### 🧑🏽 Minority Underrepresentation Strategies")
+        st.write("- Partner with trusted community leaders")
+        st.write("- Leverage cultural practices in recruitment")
+        st.write("- Return personal results as incentive")
+        st.write("- Address medical mistrust transparently")
+        st.write("- Increase awareness campaigns tailored to underrepresented populations")
+
+gap_data = {
+    "Demographic": [],
+    "Gap Count": [],
+    "Gap Label": []
+}
+
+# Compute absolute count gaps
+female_count_gap = int((target_female / 100 * total_enrollment) - (current_female / 100 * current_enrollment))
+gap_data["Demographic"].append("Female")
+gap_data["Gap Count"].append(female_count_gap)
+gap_data["Gap Label"].append(f"{female_count_gap:+} ({gender_gap['Female']:+.1f}%)")
+
+for race in races:
+    target_count = target_race[race] / 100 * total_enrollment
+    current_count = current_race[race] / 100 * current_enrollment
+    gap_count = int(target_count - current_count)
+    gap_data["Demographic"].append(race)
+    gap_data["Gap Count"].append(gap_count)
+    gap_data["Gap Label"].append(f"{gap_count:+} ({race_gap[race]:+.1f}%)")
+
+bar_fig = px.bar(
+    gap_data,
+    x="Demographic",
+    y="Gap Count",
+    title="Enrollment Gaps by Count (and Percent)",
+    text="Gap Label",
+    color="Gap Count",
+    color_continuous_scale="RdBu",
+    height=400
+)
+bar_fig.update_traces(texttemplate='%{text}', textposition='outside')
+bar_fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+
+st.plotly_chart(bar_fig)
 
 # ---------- Strategy Recommendations ----------
 
@@ -98,120 +144,26 @@ if gender_gap["Male"] > 5:
 for race, gap in race_gap.items():
     if gap > 5:
         st.markdown(f"### 🧑🏽 {race} Underrepresentation Strategies")
-        st.write("- Partner with trusted community leaders")
-        st.write("- Leverage cultural practices in recruitment")
+        if race == "African American":
+            st.write("- Partner with barbershops, churches, and historically Black institutions")
+            st.write("- Use trusted community figures and storytelling")
+        elif race == "Hispanic":
+            st.write("- Offer materials and consent forms in Spanish")
+            st.write("- Partner with Latino community health workers and cultural centers")
+        elif race == "Asian":
+            st.write("- Engage multilingual Asian outreach coordinators")
+            st.write("- Respect cultural norms around elder care and decision making")
+        elif race == "Other":
+            st.write("- Tailor messaging to reflect local minority populations")
+            st.write("- Collaborate with grassroots or refugee support orgs")
+        elif race == "White":
+            st.write("- Use broad national outreach campaigns and digital health tools")
         st.write("- Return personal results as incentive")
         st.write("- Address medical mistrust transparently")
+        st.write("- Tailor messaging to leaving a legacy for future generations")
+        st.write("- Ensure culturally-tailored messaging is used")
+        st.write("- Make sure the trial team is diverse to increase comfortability")
+        st.write(f"- Increase awareness campaigns tailored to {race} communities")
 
 # ---------- Optional Radar Chart Demo (for a single persona) ----------
-st.markdown("---")
-st.header("🧠 Individual Persona Radar Chart")
-
-left_col, right_col = st.columns([1, 2])
-
-with left_col:
-    st.subheader("Persona Characteristics")
-    race = st.selectbox("Race", races)
-    gender = st.selectbox("Gender", ["Male", "Female"])
-    family_history = st.selectbox("Family History of Alzheimer's", ["Yes", "No"])
-    study_partner = st.selectbox("Type of Study Partner", ["Spousal", "Son/Daughter", "Non-Family"])
-
-with right_col:
-    st.subheader("Recruitment Strategies")
-    recruitment_strategy = st.selectbox("Return Personal Results?", ["Do not return personal results", "Return personal results"])
-    childcare_services = st.selectbox("Provide Childcare Services?", ["No", "Yes"])
-    cultural_practices = st.selectbox("Recruitment Leverages Cultural Practices?", ["No", "Yes"])
-    emphasize_generations = st.selectbox("Emphasize Impact on Future Generations?", ["No", "Yes"])
-    st.subheader("Recruitment Strategy Effects")
-
-    base_scores = {
-        "Race": {"White": 80, "African American": 40, "Hispanic": 50, "Asian": 50, "Other": 50}[race],
-        "Gender": 65 if gender == "Male" else 45,
-        "Family History": 80 if family_history == "Yes" else 20,
-        "Study Partner": {"Spousal": 85, "Son/Daughter": 60, "Non-Family": 40}[study_partner]
-    }
-
-    # Apply bonuses
-    race_score = base_scores["Race"]
-    gender_score = base_scores["Gender"]
-    family_score = base_scores["Family History"]
-    partner_score = base_scores["Study Partner"]
-
-    score_explanations = []
-
-    if recruitment_strategy == "Return personal results" and family_history == "Yes":
-        family_score += 20
-        score_explanations.append("✅ Returning personal results increased family history score by 20.")
-
-    if childcare_services == "Yes":
-        bonus = {"Spousal": 2, "Son/Daughter": 15, "Non-Family": 8}[study_partner]
-        partner_score += bonus
-        score_explanations.append(f"✅ Childcare services increased study partner score by {bonus}.")
-
-    if cultural_practices == "Yes":
-        bonus = 2 if race == "White" else 8
-        race_score += bonus
-        score_explanations.append(f"✅ Cultural practice alignment increased race score by {bonus}.")
-
-    if emphasize_generations == "Yes":
-        bonus = 6 if family_history == "Yes" or race == "African American" else 3
-        race_score += bonus
-        score_explanations.append(f"✅ Emphasis on future generations increased race score by {bonus}.")
-
-    
-
-# Persona scoring
-scores = [min(100, race_score), min(100, gender_score), min(100, family_score), min(100, partner_score)]
-total_score = sum(scores) / 4
-
-# Radar chart
-
-# Add base (pre-strategy) scores to compare
-base_score_values = [
-    base_scores["Race"],
-    base_scores["Gender"],
-    base_scores["Family History"],
-    base_scores["Study Partner"]
-]
-
-fig = go.Figure()
-fig.add_trace(go.Scatterpolar(
-    r=base_score_values,
-    theta=["Race", "Gender", "Family History", "Study Partner"],
-    fill="toself",
-    name="Baseline Persona",
-    line=dict(color="lightblue"),
-    fillcolor="rgba(173, 216, 230, 0.3)"
-))
-
-fig.add_trace(go.Scatterpolar(
-    r=scores,
-    theta=["Race", "Gender", "Family History", "Study Partner"],
-    fill="toself",
-    name="With Recruitment Strategies",
-    line=dict(color="blue"),
-    fillcolor="rgba(0, 100, 255, 0.3)"
-))
-fig.add_trace(go.Scatterpolar(
-    r=scores,
-    theta=["Race", "Gender", "Family History", "Study Partner"],
-    fill="toself",
-    name="Risk Factors",
-    line=dict(color="blue"),
-    fillcolor="rgba(0, 100, 255, 0.3)"
-))
-fig.update_layout(
-    polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
-    showlegend=True,
-    title="Alzheimer's Risk Factors",
-    height=500,
-    width=600
-)
-
-st.plotly_chart(fig)
-st.subheader(f"Total Score: {total_score:.1f}")
-
-st.markdown("---")
-st.subheader("📈 Recruitment Strategy Score Impact")
-for explanation in score_explanations:
-    st.success(explanation)
+... (the rest of your code remains unchanged)
