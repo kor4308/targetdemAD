@@ -104,8 +104,45 @@ with left_col:
     emphasize_generations = st.selectbox("Emphasize Impact on Future Generations?", ["No", "Yes"])
 
 with right_col:
+    st.subheader("Recruitment Strategy Effects")
 
-    # Persona scoring
+    base_scores = {
+        "Race": {"White": 80, "African American": 40, "Hispanic": 50, "Asian": 50, "Other": 50}[race],
+        "Gender": 65 if gender == "Male" else 45,
+        "Family History": 80 if family_history == "Yes" else 20,
+        "Study Partner": {"Spousal": 85, "Son/Daughter": 60, "Non-Family": 40}[study_partner]
+    }
+
+    # Apply bonuses
+    race_score = base_scores["Race"]
+    gender_score = base_scores["Gender"]
+    family_score = base_scores["Family History"]
+    partner_score = base_scores["Study Partner"]
+
+    score_explanations = []
+
+    if recruitment_strategy == "Return personal results" and family_history == "Yes":
+        family_score += 20
+        score_explanations.append("✅ Returning personal results increased family history score by 20.")
+
+    if childcare_services == "Yes":
+        bonus = {"Spousal": 2, "Son/Daughter": 15, "Non-Family": 8}[study_partner]
+        partner_score += bonus
+        score_explanations.append(f"✅ Childcare services increased study partner score by {bonus}.")
+
+    if cultural_practices == "Yes":
+        bonus = 2 if race == "White" else 8
+        race_score += bonus
+        score_explanations.append(f"✅ Cultural practice alignment increased race score by {bonus}.")
+
+    if emphasize_generations == "Yes":
+        bonus = 6 if family_history == "Yes" or race == "African American" else 3
+        race_score += bonus
+        score_explanations.append(f"✅ Emphasis on future generations increased race score by {bonus}.")
+
+    st.write("### Score Impact Summary")
+    for explanation in score_explanations:
+        st.success(explanation)
     race_score = {"White": 80, "African American": 40, "Hispanic": 50, "Asian": 50, "Other": 50}[race]
     gender_score = 65 if gender == "Male" else 45
     family_score = 80 if family_history == "Yes" else 20
