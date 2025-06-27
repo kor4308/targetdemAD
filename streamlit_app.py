@@ -1,7 +1,6 @@
 import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
-import pandas as pd
 
 # ---------- Demographic Gap Analyzer ----------
 st.title("Alzheimer's Disease Persona & Recruitment Analyzer")
@@ -105,50 +104,45 @@ target_male_count = total_enrollment - target_female_count
 current_race_count = {r: int(current_enrollment * current_race[r] / 100) for r in races}
 target_race_count = {r: int(total_enrollment * target_race[r] / 100) for r in races}
 
-# Combine labels and values
-labels = ["Female", "Male"] + races
+# Labels and Data
+groups = ["Female", "Male"] + races
 current_counts = [current_female_count, current_male_count] + [current_race_count[r] for r in races]
 target_counts = [target_female_count, target_male_count] + [target_race_count[r] for r in races]
-current_percent = [current_female, current_male] + [current_race[r] for r in races]
-target_percent = [target_female, target_male] + [target_race[r] for r in races]
+diffs = [t - c for t, c in zip(target_counts, current_counts)]
 
-# Layout: bar chart left, table right
-bar_col, table_col = st.columns(2)
+bar_colors = ["red" if diff > 0 else "steelblue" for diff in diffs]
 
-with bar_col:
+chart_col, table_col = st.columns([2, 1])
+
+with chart_col:
     stacked_fig = go.Figure()
     stacked_fig.add_trace(go.Bar(
-        x=labels,
+        x=groups,
         y=target_counts,
         name='Target Enrollment',
         marker_color='lightgray',
-        text=[f"{count} ({pct:.1f}%)" for count, pct in zip(target_counts, target_percent)],
-        textposition='auto'
+        textposition='none'
     ))
     stacked_fig.add_trace(go.Bar(
-        x=labels,
+        x=groups,
         y=current_counts,
         name='Current Enrollment',
-        marker_color='steelblue',
-        text=[f"{count} ({pct:.1f}%)" for count, pct in zip(current_counts, current_percent)],
-        textposition='auto'
+        marker_color=bar_colors,
+        textposition='none'
     ))
     stacked_fig.update_layout(
         barmode='overlay',
-        title="Target vs. Current Enrollment (Counts with %)",
+        title="Target vs. Current Enrollment (Counts)",
         yaxis=dict(title="Participant Count"),
         height=550
     )
     st.plotly_chart(stacked_fig)
 
 with table_col:
-    df = pd.DataFrame({
-        "Demographic": labels,
-        "Target Count": target_counts,
-        "Current Count": current_counts,
-        "% Change Needed": [f"{target_percent[i] - current_percent[i]:+.1f}%" for i in range(len(labels))]
-    })
-    st.dataframe(df)
+    st.markdown("#### 📋 Enrollment Table")
+    for i, label in enumerate(groups):
+        st.markdown(f"**{label}**")
+        st.markdown(f"Target: {target_counts[i]} | Current: {current_counts[i]} | Change Needed: {diffs[i]:+}")
 
 # ---------- Optional Radar Chart Demo (for a single persona) ----------
 
@@ -178,15 +172,24 @@ partner_score = {"Spousal": 85, "Son/Daughter": 60, "Non-Family": 40}[study_part
 
 baseline_scores = [min(100, race_score), min(100, gender_score), min(100, family_score), min(100, partner_score)]
 
+bonus_labels = []
+
 # Recruitment strategy adjustments
 if return_results == "Return personal results" and family_history == "Yes":
     family_score += 20
+    bonus_labels.append("✅ Bonus Applied: Returning personal results boosted family history score.")
 if childcare == "Yes":
-    partner_score += {"Spousal": 2, "Son/Daughter": 15, "Non-Family": 8}[study_partner]
+    inc = {"Spousal": 2, "Son/Daughter": 15, "Non-Family": 8}[study_partner]
+    partner_score += inc
+    bonus_labels.append(f"✅ Bonus Applied: Childcare support increased partner score by {inc}.")
 if cultural_practices == "Yes":
-    race_score += 2 if race == "White" else 8
+    inc = 2 if race == "White" else 8
+    race_score += inc
+    bonus_labels.append(f"✅ Bonus Applied: Cultural practice emphasis increased race score by {inc}.")
 if emphasize_generations == "Yes":
-    race_score += 6 if family_history == "Yes" or race == "African American" else 3
+    inc = 6 if family_history == "Yes" or race == "African American" else 3
+    race_score += inc
+    bonus_labels.append(f"✅ Bonus Applied: Legacy messaging increased race score by {inc}.")
 
 adjusted_scores = [min(100, race_score), min(100, gender_score), min(100, family_score), min(100, partner_score)]
 total_score = sum(adjusted_scores) / 4
@@ -217,3 +220,6 @@ fig.update_layout(
 
 st.plotly_chart(fig)
 st.subheader(f"Total Adjusted Score: {total_score:.1f}")
+
+for label in bonus_labels:
+    st.success(label)
