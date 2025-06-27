@@ -133,7 +133,8 @@ with table_col:
         "Group": groups,
         "Target Count": target_counts,
         "Current Count": current_counts,
-        "Change Needed": [t - c for t, c in zip(target_counts, current_counts)]
+        "Change Needed (Count)": [t - c for t, c in zip(target_counts, current_counts)],
+        "Change Needed (%)": [round((t - c) / t * 100, 1) if t > 0 else 0 for t, c in zip(target_counts, current_counts)]
     })
     st.dataframe(df)
 
