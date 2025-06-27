@@ -108,12 +108,13 @@ with left_col:
     gender = st.selectbox("Gender", ["Male", "Female"])
     family_history = st.selectbox("Family History of Alzheimer's", ["Yes", "No"])
     study_partner = st.selectbox("Type of Study Partner", ["Spousal", "Son/Daughter", "Non-Family"])
+
+with right_col:
+    st.subheader("Recruitment Strategies")
     recruitment_strategy = st.selectbox("Return Personal Results?", ["Do not return personal results", "Return personal results"])
     childcare_services = st.selectbox("Provide Childcare Services?", ["No", "Yes"])
     cultural_practices = st.selectbox("Recruitment Leverages Cultural Practices?", ["No", "Yes"])
     emphasize_generations = st.selectbox("Emphasize Impact on Future Generations?", ["No", "Yes"])
-
-with right_col:
     st.subheader("Recruitment Strategy Effects")
 
     base_scores = {
@@ -150,9 +151,7 @@ with right_col:
         race_score += bonus
         score_explanations.append(f"✅ Emphasis on future generations increased race score by {bonus}.")
 
-    st.write("### Score Impact Summary")
-    for explanation in score_explanations:
-        st.success(explanation)
+    
 
 # Persona scoring
 scores = [min(100, race_score), min(100, gender_score), min(100, family_score), min(100, partner_score)]
@@ -204,3 +203,8 @@ fig.update_layout(
 
 st.plotly_chart(fig)
 st.subheader(f"Total Score: {total_score:.1f}")
+
+st.markdown("---")
+st.subheader("📈 Recruitment Strategy Score Impact")
+for explanation in score_explanations:
+    st.success(explanation)
