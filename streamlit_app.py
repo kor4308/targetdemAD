@@ -1,6 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
+import pandas as pd
 
 # ---------- Demographic Gap Analyzer ----------
 st.title("Alzheimer's Disease Persona & Recruitment Analyzer")
@@ -92,8 +93,8 @@ for race, gap in race_gap.items():
         st.write("- Use culturally-tailored outreach")
         st.write("- Ensure diverse trial teams to increase comfort")
 
-# ---------- Stacked Bar Visualization ----------
-st.subheader("📈 Stacked Enrollment Comparison")
+# ---------- Stacked Bar Visualization and Table ----------
+st.subheader("📈 Enrollment Comparison")
 
 # Calculate counts
 current_female_count = int(current_enrollment * current_female / 100)
@@ -104,40 +105,50 @@ target_male_count = total_enrollment - target_female_count
 current_race_count = {r: int(current_enrollment * current_race[r] / 100) for r in races}
 target_race_count = {r: int(total_enrollment * target_race[r] / 100) for r in races}
 
-# Labels
+# Combine labels and values
 labels = ["Female", "Male"] + races
 current_counts = [current_female_count, current_male_count] + [current_race_count[r] for r in races]
 target_counts = [target_female_count, target_male_count] + [target_race_count[r] for r in races]
 current_percent = [current_female, current_male] + [current_race[r] for r in races]
 target_percent = [target_female, target_male] + [target_race[r] for r in races]
 
-# Stacked bar chart
-stacked_fig = go.Figure()
-stacked_fig.add_trace(go.Bar(
-    x=labels,
-    y=target_counts,
-    name='Target Enrollment',
-    marker_color='lightgray',
-    text=[f"{count} ({pct:.1f}%)" for count, pct in zip(target_counts, target_percent)],
-    textposition='auto'
-))
-stacked_fig.add_trace(go.Bar(
-    x=labels,
-    y=current_counts,
-    name='Current Enrollment',
-    marker_color='steelblue',
-    text=[f"{count} ({pct:.1f}%)" for count, pct in zip(current_counts, current_percent)],
-    textposition='auto'
-))
+# Layout: bar chart left, table right
+bar_col, table_col = st.columns(2)
 
-stacked_fig.update_layout(
-    barmode='overlay',
-    title="Target vs. Current Enrollment (Counts with %)",
-    yaxis=dict(title="Participant Count"),
-    height=550
-)
+with bar_col:
+    stacked_fig = go.Figure()
+    stacked_fig.add_trace(go.Bar(
+        x=labels,
+        y=target_counts,
+        name='Target Enrollment',
+        marker_color='lightgray',
+        text=[f"{count} ({pct:.1f}%)" for count, pct in zip(target_counts, target_percent)],
+        textposition='auto'
+    ))
+    stacked_fig.add_trace(go.Bar(
+        x=labels,
+        y=current_counts,
+        name='Current Enrollment',
+        marker_color='steelblue',
+        text=[f"{count} ({pct:.1f}%)" for count, pct in zip(current_counts, current_percent)],
+        textposition='auto'
+    ))
+    stacked_fig.update_layout(
+        barmode='overlay',
+        title="Target vs. Current Enrollment (Counts with %)",
+        yaxis=dict(title="Participant Count"),
+        height=550
+    )
+    st.plotly_chart(stacked_fig)
 
-st.plotly_chart(stacked_fig)
+with table_col:
+    df = pd.DataFrame({
+        "Demographic": labels,
+        "Target Count": target_counts,
+        "Current Count": current_counts,
+        "% Change Needed": [f"{target_percent[i] - current_percent[i]:+.1f}%" for i in range(len(labels))]
+    })
+    st.dataframe(df)
 
 # ---------- Optional Radar Chart Demo (for a single persona) ----------
 
