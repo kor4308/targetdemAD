@@ -166,4 +166,4 @@ for race, gap in race_gap.items():
         st.write(f"- Increase awareness campaigns tailored to {race} communities")
 
 # ---------- Optional Radar Chart Demo (for a single persona) ----------
-... (the rest of your code remains unchanged)
+# Optional section placeholder. Add your radar chart code below if needed.
