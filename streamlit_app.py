@@ -40,18 +40,20 @@ target_race = {}
 current_race = {}
 
 st.markdown("### Target Race %")
+default_target_race = {"White": 50, "African American": 25, "Hispanic": 10, "Asian": 5, "Other": 5}
 target_total = 0
 for race in races:
-    target_race[race] = st.number_input(f"Target {race}", 0, 100, 20, key=f"t_{race}")
+    target_race[race] = st.number_input(f"Target {race}", 0, 100, default_target_race[race], key=f"t_{race}")
     target_total += target_race[race]
 
 if target_total != 100:
     st.error(f"Target race percentages must total 100%. Current total: {target_total}%")
 
 st.markdown("### Current Race %")
+default_current_race = {"White": 50, "African American": 25, "Hispanic": 10, "Asian": 5, "Other": 5}
 current_total = 0
 for race in races:
-    current_race[race] = st.number_input(f"Current {race}", 0, 100, 15, key=f"c_{race}")
+    current_race[race] = st.number_input(f"Current {race}", 0, 100, default_current_race[race], key=f"c_{race}")
     current_total += current_race[race]
 
 if current_total != 100:
