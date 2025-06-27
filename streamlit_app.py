@@ -4,7 +4,13 @@ import plotly.graph_objects as go
 # ---------- Demographic Gap Analyzer ----------
 st.title("Alzheimer's Disease Persona & Recruitment Analyzer")
 
-st.markdown("## 🎯 Target vs. Current Enrollment")
+# ---------- Trial Characteristics ----------
+st.markdown("## 🧪 Trial Characteristics")
+lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"])
+pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"])
+study_partner_required = st.selectbox("Is a Study Partner Required?", ["Yes", "No"])
+
+st.markdown("## 🌟 Target vs. Current Enrollment")
 
 # --- Gender Input ---
 st.subheader("Gender Distribution")
@@ -64,6 +70,8 @@ if gender_gap["Female"] > 5:
     st.write("- Collaborate with women-led organizations")
     st.write("- Emphasize legacy/future generation impact")
     st.write("- Offer flexible scheduling and childcare")
+    if lp_required == "Yes":
+        st.warning("Female underrepresentation combined with lumbar puncture requirement may cause fear or confusion. Provide educational materials explaining the difference between lumbar punctures and epidurals to reduce anxiety and improve trust.")
 
 for race, gap in race_gap.items():
     if gap > 5:
@@ -125,4 +133,3 @@ fig.update_layout(
 
 st.plotly_chart(fig)
 st.subheader(f"Total Score: {total_score:.1f}")
-
