@@ -6,9 +6,14 @@ st.title("Alzheimer's Disease Persona & Recruitment Analyzer")
 
 # ---------- Trial Characteristics ----------
 st.markdown("## 🧪 Trial Characteristics")
-lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"])
-pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"])
-study_partner_required = st.selectbox("Is a Study Partner Required?", ["Yes", "No"])
+
+trial_col1, trial_col2, trial_col3 = st.columns(3)
+with trial_col1:
+    lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"])
+with trial_col2:
+    pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"])
+with trial_col3:
+    study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"])
 
 st.markdown("## 🌟 Target vs. Current Enrollment")
 
@@ -84,6 +89,21 @@ for race, gap in race_gap.items():
 # ---------- Optional Radar Chart Demo (for a single persona) ----------
 st.markdown("---")
 st.header("🧠 Individual Persona Radar Chart")
+
+left_col, right_col = st.columns([1, 2])
+
+with left_col:
+    st.subheader("Persona Characteristics")
+    race = st.selectbox("Race", races)
+    gender = st.selectbox("Gender", ["Male", "Female"])
+    family_history = st.selectbox("Family History of Alzheimer's", ["Yes", "No"])
+    study_partner = st.selectbox("Type of Study Partner", ["Spousal", "Son/Daughter", "Non-Family"])
+    recruitment_strategy = st.selectbox("Return Personal Results?", ["Do not return personal results", "Return personal results"])
+    childcare_services = st.selectbox("Provide Childcare Services?", ["No", "Yes"])
+    cultural_practices = st.selectbox("Recruitment Leverages Cultural Practices?", ["No", "Yes"])
+    emphasize_generations = st.selectbox("Emphasize Impact on Future Generations?", ["No", "Yes"])
+
+with right_col:
 
 race = st.selectbox("Race", races)
 gender = st.selectbox("Gender", ["Male", "Female"])
