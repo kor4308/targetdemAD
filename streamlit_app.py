@@ -67,7 +67,7 @@ gender_gap = {
     "Female": target_female - current_female,
     "Male": target_male - current_male
 }
-race_gap = {race: target_race[race] - current_race[race] for race in races}
+race_gap = {race: current_race[race] - target_race[race] for race in races}
 
 st.subheader("Gender Gaps")
 for gender, gap in gender_gap.items():
@@ -78,8 +78,6 @@ for race, gap in race_gap.items():
     st.write(f"**{race}:** {gap:+.1f}%")
 
 # ---------- Strategy Recommendations ----------
-st.markdown("---")
-st.header("📌 Strategy Recommendations Based on Gaps")
 
 if gender_gap["Female"] > 5:
     st.markdown("### 👩 Female Underrepresentation Strategies")
@@ -90,6 +88,13 @@ if gender_gap["Female"] > 5:
     if lp_required == "Yes":
         st.warning("Female underrepresentation combined with lumbar puncture requirement may cause fear or confusion. Provide educational materials explaining the difference between lumbar punctures and epidurals to reduce anxiety and improve trust.")
 
+if gender_gap["Male"] > 5:
+    st.markdown("### 👨 Male Underrepresentation Strategies")
+    st.write("- Highlight relevance to brain health and family leadership roles")
+    st.write("- Emphasize convenience and low time commitment")
+    st.write("- Partner with male-focused community organizations or barbershop networks")
+    st.write("- Share testimonials from other male participants to reduce stigma")
+    st.write("- Provide transportation or remote visit options")
 for race, gap in race_gap.items():
     if gap > 5:
         st.markdown(f"### 🧑🏽 {race} Underrepresentation Strategies")
