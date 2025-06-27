@@ -40,6 +40,7 @@ with trial_col3:
     study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"])
 
 st.markdown("## 🔄 Current Enrollment")
+current_enrollment = st.number_input("Current Total Enrollment", min_value=0, value=800)
 
 # --- Current Gender Input ---
 col3, col4 = st.columns(2)
@@ -55,28 +56,6 @@ current_total = 0
 for race in races:
     current_race[race] = st.number_input(f"Current {race}", 0, 100, default_current_race[race], key=f"c_{race}")
     current_total += current_race[race]
-if current_total != 100:
-    st.error(f"Current race percentages must total 100%. Current total: {current_total}%")
-target_race = {}
-current_race = {}
-
-st.markdown("### Target Race %")
-default_target_race = {"White": 55, "African American": 25, "Hispanic": 10, "Asian": 5, "Other": 5}
-target_total = 0
-for race in races:
-    target_race[race] = st.number_input(f"Target {race}", 0, 100, default_target_race[race], key=f"t_{race}")
-    target_total += target_race[race]
-
-if target_total != 100:
-    st.error(f"Target race percentages must total 100%. Current total: {target_total}%")
-
-st.markdown("### Current Race %")
-default_current_race = {"White": 55, "African American": 25, "Hispanic": 10, "Asian": 5, "Other": 5}
-current_total = 0
-for race in races:
-    current_race[race] = st.number_input(f"Current {race}", 0, 100, default_current_race[race], key=f"c_{race}")
-    current_total += current_race[race]
-
 if current_total != 100:
     st.error(f"Current race percentages must total 100%. Current total: {current_total}%")
 
