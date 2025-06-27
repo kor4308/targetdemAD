@@ -91,6 +91,12 @@ if (target_counts[0] - current_counts[0]) > total_enrollment * 0.05:
     st.write("- Emphasize legacy/future generation impact")
     st.write("- Offer flexible scheduling and childcare")
 
+if (target_counts[1] - current_counts[1]) > total_enrollment * 0.05:
+    st.markdown("### 👨 Male Underrepresentation Strategies")
+    st.write("- Advertise at sporting events")
+    st.write("- Highlight impact on family and legacy")
+    st.write("- Leverage community leaders in male-dominated spaces")
+
 for i, race in enumerate(races):
     if (target_counts[i + 2] - current_counts[i + 2]) > total_enrollment * 0.05:
         st.markdown(f"### 🧑🏽 {race} Underrepresentation Strategies")
