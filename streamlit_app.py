@@ -133,9 +133,7 @@ with table_col:
         "Group": groups,
         "Target Count": target_counts,
         "Current Count": current_counts,
-        "Change Needed": [t - c for t, c in zip(target_counts, current_counts)],
-        "Target %": [f"{(t/total_enrollment)*100:.1f}%" for t in target_counts],
-        "Current %": [f"{(c/current_enrollment)*100:.1f}%" for c in current_counts],
+        "Change Needed": [t - c for t, c in zip(target_counts, current_counts)]
     })
     st.dataframe(df)
 
