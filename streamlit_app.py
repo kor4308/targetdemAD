@@ -1,6 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
+import pandas as pd
 
 # ---------- Demographic Gap Analyzer ----------
 st.title("Alzheimer's Disease Persona & Recruitment Analyzer")
@@ -15,7 +16,7 @@ st.markdown("### Target Demographics")
 # --- Gender Input ---
 col1, col2 = st.columns(2)
 with col1:
-    target_female = st.number_input("Target Female %", 0, 100, 50)
+    target_female = st.number_input("Target Female %", 0, 100, 55)
 with col2:
     target_male = 100 - target_female
     st.markdown(f"**Target Male %**: {target_male}")
@@ -66,17 +67,22 @@ st.markdown(f"**📍 Current Total Enrollment:** {current_enrollment} participan
 # ---------- Gap Calculation ----------
 st.header("📊 Enrollment Gaps")
 
-gender_gap = {
-    "Female": target_female - current_female,
-    "Male": target_male - current_male
-}
-race_gap = {race: target_race[race] - current_race[race] for race in races}
+groups = ["Female", "Male"] + races
+current_counts = [
+    int(current_enrollment * current_female / 100),
+    int(current_enrollment * current_male / 100),
+] + [int(current_enrollment * current_race[r] / 100) for r in races]
+
+target_counts = [
+    int(total_enrollment * target_female / 100),
+    int(total_enrollment * target_male / 100),
+] + [int(total_enrollment * target_race[r] / 100) for r in races]
 
 # ---------- Strategy Recommendations ----------
 st.markdown("---")
 st.header("📌 Strategy Recommendations Based on Gaps")
 
-if gender_gap["Female"] > 5:
+if (target_counts[0] - current_counts[0]) > total_enrollment * 0.05:
     st.markdown("### 👩 Female Underrepresentation Strategies")
     if lp_required == "Yes":
         st.write("- Educate about lumbar punctures vs. epidurals to reduce fear")
@@ -85,8 +91,8 @@ if gender_gap["Female"] > 5:
     st.write("- Emphasize legacy/future generation impact")
     st.write("- Offer flexible scheduling and childcare")
 
-for race, gap in race_gap.items():
-    if gap > 5:
+for i, race in enumerate(races):
+    if (target_counts[i + 2] - current_counts[i + 2]) > total_enrollment * 0.05:
         st.markdown(f"### 🧑🏽 {race} Underrepresentation Strategies")
         st.write("- Tailor messaging around leaving a legacy for future generations")
         st.write("- Use culturally-tailored outreach")
@@ -94,23 +100,6 @@ for race, gap in race_gap.items():
 
 # ---------- Stacked Bar Visualization and Table ----------
 st.subheader("📈 Enrollment Comparison")
-
-# Calculate counts
-current_female_count = int(current_enrollment * current_female / 100)
-current_male_count = current_enrollment - current_female_count
-target_female_count = int(total_enrollment * target_female / 100)
-target_male_count = total_enrollment - target_female_count
-
-current_race_count = {r: int(current_enrollment * current_race[r] / 100) for r in races}
-target_race_count = {r: int(total_enrollment * target_race[r] / 100) for r in races}
-
-# Labels and Data
-groups = ["Female", "Male"] + races
-current_counts = [current_female_count, current_male_count] + [current_race_count[r] for r in races]
-target_counts = [target_female_count, target_male_count] + [target_race_count[r] for r in races]
-diffs = [t - c for t, c in zip(target_counts, current_counts)]
-
-bar_colors = ["red" if diff > 0 else "steelblue" for diff in diffs]
 
 chart_col, table_col = st.columns([2, 1])
 
@@ -127,7 +116,7 @@ with chart_col:
         x=groups,
         y=current_counts,
         name='Current Enrollment',
-        marker_color=bar_colors,
+        marker_color='steelblue',
         textposition='none'
     ))
     stacked_fig.update_layout(
@@ -140,15 +129,15 @@ with chart_col:
 
 with table_col:
     st.markdown("#### 📋 Enrollment Table")
-    for i, label in enumerate(groups):
-        change_needed = diffs[i]
-        color = "red" if change_needed > 0 else "black"
-        st.markdown(
-            f"**{label}**  "+
-            f"Target: {target_counts[i]} | Current: {current_counts[i]} | " +
-            f"<span style='color:{color}'>Change Needed: {change_needed:+}</span>",
-            unsafe_allow_html=True
-        )
+    df = pd.DataFrame({
+        "Group": groups,
+        "Target Count": target_counts,
+        "Current Count": current_counts,
+        "Change Needed": [t - c for t, c in zip(target_counts, current_counts)],
+        "Target %": [f"{(t/total_enrollment)*100:.1f}%" for t in target_counts],
+        "Current %": [f"{(c/current_enrollment)*100:.1f}%" for c in current_counts],
+    })
+    st.dataframe(df)
 
 # ---------- Optional Radar Chart Demo (for a single persona) ----------
 
