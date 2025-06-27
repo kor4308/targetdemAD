@@ -27,7 +27,9 @@ for race in races:
     target_race[race] = st.number_input(f"Target {race}", 0, 100, default_target_race[race], key=f"t_{race}")
     target_total += target_race[race]
 if target_total != 100:
-    st.error(f"Target race percentages must total 100%. Current total: {target_total}%")st.markdown("## 🧪 Trial Characteristics")
+    st.error(f"Target race percentages must total 100%. Current total: {target_total}%")
+
+st.markdown("## 🧪 Trial Characteristics")
 
 trial_col1, trial_col2, trial_col3 = st.columns(3)
 with trial_col1:
