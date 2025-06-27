@@ -106,6 +106,21 @@ with left_col:
 with right_col:
 
     # Persona scoring
+    race_score = {"White": 80, "African American": 40, "Hispanic": 50, "Asian": 50, "Other": 50}[race]
+    gender_score = 65 if gender == "Male" else 45
+    family_score = 80 if family_history == "Yes" else 20
+    partner_score = {"Spousal": 85, "Son/Daughter": 60, "Non-Family": 40}[study_partner]
+
+    if recruitment_strategy == "Return personal results" and family_history == "Yes":
+        family_score += 20
+    if childcare_services == "Yes":
+        partner_score += {"Spousal": 2, "Son/Daughter": 15, "Non-Family": 8}[study_partner]
+    if cultural_practices == "Yes":
+        race_score += 2 if race == "White" else 8
+    if emphasize_generations == "Yes":
+        race_score += 6 if family_history == "Yes" or race == "African American" else 3
+
+    # Persona scoring
 scores = [min(100, race_score), min(100, gender_score), min(100, family_score), min(100, partner_score)]
 total_score = sum(scores) / 4
 
