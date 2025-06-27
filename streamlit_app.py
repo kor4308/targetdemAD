@@ -141,8 +141,15 @@ with chart_col:
 with table_col:
     st.markdown("#### 📋 Enrollment Table")
     for i, label in enumerate(groups):
-        st.markdown(f"**{label}**")
-        st.markdown(f"Target: {target_counts[i]} | Current: {current_counts[i]} | Change Needed: {diffs[i]:+}")
+        change_needed = diffs[i]
+        color = "red" if change_needed > 0 else "black"
+        st.markdown(
+            f"**{label}**  
+"
+            f"Target: {target_counts[i]} | Current: {current_counts[i]} | "
+            f"<span style='color:{color}'>Change Needed: {change_needed:+}</span>",
+            unsafe_allow_html=True
+        )")
 
 # ---------- Optional Radar Chart Demo (for a single persona) ----------
 
