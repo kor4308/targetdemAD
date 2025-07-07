@@ -150,6 +150,7 @@ with table_col:
 st.markdown("---")
 display_disease = disease if disease else "this condition"
 st.header(f"📌 Strategy Recommendations Based on Gaps in {display_disease}")
+st.caption("🔽 Ordered from Largest to Smallest Gap")
 
 emoji_map = {
     "White": "🧑🏻",
