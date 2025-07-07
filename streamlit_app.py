@@ -11,7 +11,7 @@ top_col1, top_col2, top_col3 = st.columns(3)
 
 # Trial Characteristics (Left)
 with top_col1:
-    st.markdown("<h3 style='font-size:22px;'>🧪 Trial Characteristics</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-size:24px;'>🧪 Trial Characteristics</h3>", unsafe_allow_html=True)
     therapeutic_area = st.selectbox("Therapeutic Area", ["Neurodegenerative", "Oncology", "Cardiometabolic"])
 
     if therapeutic_area == "Neurodegenerative":
@@ -70,23 +70,37 @@ for group in target_groups:
     diffs.append(diff)
     group_gap[group] = diff
 
+# Roll-up totals for gender and race
+gender_totals = {"Male": 0, "Female": 0}
+current_gender_totals = {"Male": 0, "Female": 0}
+race_totals = {"White": 0, "African American": 0, "Hispanic": 0, "Asian": 0, "Other": 0}
+current_race_totals = {"White": 0, "African American": 0, "Hispanic": 0, "Asian": 0, "Other": 0}
+
+for group in target_groups:
+    gender, race = group.split()
+    gender_totals[gender] += target_counts[group] / 100 * total_enrollment
+    current_gender_totals[gender] += current_counts[group] / 100 * current_enrollment
+    race_totals[race] += target_counts[group] / 100 * total_enrollment
+    current_race_totals[race] += current_counts[group] / 100 * current_enrollment
+
+# Combine data for visualization
+bar_data = []
+for race in race_totals:
+    bar_data.append({"Group": race, "Type": "Target", "Count": race_totals[race]})
+    bar_data.append({"Group": race, "Type": "Current", "Count": current_race_totals[race]})
+
+for gender in gender_totals:
+    bar_data.append({"Group": gender, "Type": "Target", "Count": gender_totals[gender]})
+    bar_data.append({"Group": gender, "Type": "Current", "Count": current_gender_totals[gender]})
+
+bar_df = pd.DataFrame(bar_data)
+
 # Visualization
 graph_col, table_col = st.columns([2, 1])
 with graph_col:
-    fig = go.Figure()
-    fig.add_trace(go.Bar(
-        x=target_groups,
-        y=target_vals,
-        name='Target',
-        marker_color='lightgrey'
-    ))
-    fig.add_trace(go.Bar(
-        x=target_groups,
-        y=current_vals,
-        name='Current',
-        marker_color='steelblue'
-    ))
-    fig.update_layout(barmode='overlay', title='Enrollment by Group', height=400)
+    fig = px.bar(bar_df, x="Group", y="Count", color="Type", barmode="group",
+                 color_discrete_map={"Target": "lightgrey", "Current": "steelblue"}, height=400)
+    fig.update_layout(title="Enrollment by Race and Gender")
     st.plotly_chart(fig)
 
 with table_col:
@@ -108,17 +122,36 @@ with table_col:
 st.markdown("---")
 st.header("📌 Strategy Recommendations Based on Gaps")
 
+def print_female_strategies():
+    st.write("- Connect with Alzheimer's research registries")
+    st.write("- Collaborate with women-led organizations")
+    st.write("- Offer flexible scheduling and childcare")
+
+def print_male_strategies():
+    st.write("- Advertise at sports games and male-dominated venues")
+    st.write("- Frame participation as contributing to science and legacy")
+    st.write("- Reduce perceived stigma around cognitive testing")
+
+def print_race_strategies():
+    st.write("- Emphasize impact on future generations")
+    st.write("- Culturally-tailored messaging")
+    st.write("- Ensure diverse study team to build trust")
+
+# Group strategies by race and gender
+gender_flags = {"Male": False, "Female": False}
+race_flags = {"White": False, "African American": False, "Hispanic": False, "Asian": False, "Other": False}
+
 for group in target_groups:
     if group_gap[group] > 0:
-        st.subheader(f"🧑🏽 {group} Underrepresentation Strategies")
-        st.write("- Emphasize impact on future generations")
-        st.write("- Culturally-tailored messaging")
-        st.write("- Ensure diverse study team to build trust")
-        if "Male" in group:
-            st.write("- Advertise at sports games and male-dominated venues")
-            st.write("- Frame participation as contributing to science and legacy")
-            st.write("- Reduce perceived stigma around cognitive testing")
-        if "Female" in group:
-            st.write("- Connect with Alzheimer's research registries")
-            st.write("- Collaborate with women-led organizations")
-            st.write("- Offer flexible scheduling and childcare")
+        gender, race = group.split()
+        if not race_flags[race]:
+            st.subheader(f"🧑🏽 All {race} Participants - Underrepresentation Strategies")
+            print_race_strategies()
+            race_flags[race] = True
+        if not gender_flags[gender]:
+            st.subheader(f"👤 All {gender} Participants - Underrepresentation Strategies")
+            if gender == "Male":
+                print_male_strategies()
+            else:
+                print_female_strategies()
+            gender_flags[gender] = True
