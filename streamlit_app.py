@@ -77,7 +77,10 @@ race_totals = {"White": 0, "African American": 0, "Hispanic": 0, "Asian": 0, "Ot
 current_race_totals = {"White": 0, "African American": 0, "Hispanic": 0, "Asian": 0, "Other": 0}
 
 for group in target_groups:
-    gender, race = group.split()
+    split_parts = group.split()
+    if len(split_parts) != 2:
+        continue
+    gender, race = split_parts
     gender_totals[gender] += target_counts[group] / 100 * total_enrollment
     current_gender_totals[gender] += current_counts[group] / 100 * current_enrollment
     race_totals[race] += target_counts[group] / 100 * total_enrollment
@@ -143,7 +146,10 @@ race_flags = {"White": False, "African American": False, "Hispanic": False, "Asi
 
 for group in target_groups:
     if group_gap[group] > 0:
-        gender, race = group.split()
+        split_parts = group.split()
+        if len(split_parts) != 2:
+            continue
+        gender, race = split_parts
         if not race_flags[race]:
             st.subheader(f"🧑🏽 All {race} Participants - Underrepresentation Strategies")
             print_race_strategies()
