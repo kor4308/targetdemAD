@@ -46,7 +46,10 @@ with top_col2:
     race_rollup = {"White": 0, "African American": 0, "Hispanic": 0, "Asian": 0, "Other": 0}
 
     for group in target_groups:
-        gender, race = group.split()
+        split_parts = group.split()
+        if len(split_parts) != 2:
+            continue
+        gender, race = split_parts
         count_val = target_counts[group] / 100 * total_enrollment
         gender_rollup[gender] += count_val
         race_rollup[race] += count_val
