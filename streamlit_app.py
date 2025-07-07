@@ -155,10 +155,18 @@ emoji_map = {
     "White": "🧑🏻",
     "African American": "🧑🏿",
     "Hispanic": "🧑🏽",
-    "Asian": "🧑🏻\u200d🦱",
+    "Asian": "🧑🏻‍🦱",
     "Other": "🧑🏻",
-    "Male": "👨",
-    "Female": "👩"
+    "Male": "👨🏻👨🏿👨🏽👨🏻‍🦱",
+    "Female": "👩🏻👩🏿👩🏽👩🏻‍🦱"
+}
+
+race_gender_emoji_map = {
+    "White": "👨🏻👩🏻",
+    "African American": "👨🏿👩🏿",
+    "Hispanic": "👨🏽👩🏽",
+    "Asian": "👨🏻‍🦱👩🏻‍🦱",
+    "Other": "🧑🏻🧑🏻"
 }
 
 def print_female_strategies():
@@ -174,7 +182,7 @@ def print_male_strategies():
     st.write("- Reduce perceived stigma around cognitive testing")
 
 def print_race_strategies(race):
-    st.subheader(f"{emoji_map[race]} {race} Participants - Underrepresentation Strategies")
+    st.subheader(f"{race_gender_emoji_map[race]} {race} Participants - Underrepresentation Strategies")
     st.write("- Emphasize impact on future generations")
     st.write("- Culturally-tailored messaging")
     st.write("- Ensure diverse study team to build trust")
