@@ -33,7 +33,7 @@ with top_col2:
     target_counts = {}
     target_total = 0
     for group in target_groups:
-        target_counts[group] = st.number_input(f"Target {group} %", 0, 100, 5, key=f"t_{group}")
+        target_counts[group] = st.number_input(f"Target {group} %", 0, 100, 10, key=f"t_{group}")
         count_val = int(target_counts[group] / 100 * total_enrollment)
         st.caption(f"{count_val} participants")
         target_total += target_counts[group]
@@ -68,11 +68,10 @@ with top_col3:
     current_counts = {}
     current_total = 0
     for group in target_groups:
-        current_counts[group] = st.number_input(f"Current {group} %", 0, 100, 5, key=f"c_{group}")
+        current_counts[group] = st.number_input(f"Current {group} Count", 0, value=80, key=f"c_{group}")
         current_total += current_counts[group]
-
-    if current_total != 100:
-        st.error(f"Current group percentages must total 100%. Current total: {current_total}%")
+        percent_val = (current_counts[group] / current_enrollment) * 100 if current_enrollment > 0 else 0
+        st.caption(f"{percent_val:.1f}%")
 
 st.markdown(f"**🎯 Target Total Enrollment:** {total_enrollment} participants")
 st.markdown(f"**📍 Current Total Enrollment:** {current_enrollment} participants")
@@ -86,7 +85,7 @@ diffs = []
 
 for group in target_groups:
     t_count = target_counts[group] / 100 * total_enrollment
-    c_count = current_counts[group] / 100 * current_enrollment
+    c_count = current_counts[group]
     target_vals.append(t_count)
     current_vals.append(c_count)
     diff = t_count - c_count
@@ -104,10 +103,10 @@ for group in target_groups:
     if len(split_parts) != 2:
         continue
     gender, race = split_parts
-    gender_totals[gender] += target_counts[group] / 100 * total_enrollment
-    current_gender_totals[gender] += current_counts[group] / 100 * current_enrollment
     race_totals[race] += target_counts[group] / 100 * total_enrollment
-    current_race_totals[race] += current_counts[group] / 100 * current_enrollment
+    current_race_totals[race] += current_counts[group]
+    gender_totals[gender] += target_counts[group] / 100 * total_enrollment
+    current_gender_totals[gender] += current_counts[group]
 
 # Combine data for visualization
 bar_data = []
