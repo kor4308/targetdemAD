@@ -11,7 +11,7 @@ top_col1, top_col2, top_col3 = st.columns(3)
 
 # Trial Characteristics (Left)
 with top_col1:
-    st.markdown("<h3 style='font-size:28px;'>🧪 Trial Characteristics</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-size:26px;'>🧪 Trial Characteristics</h3>", unsafe_allow_html=True)
     therapeutic_area = st.selectbox("Therapeutic Area", ["Neuro", "Oncology", "Cardiometabolic"], key="therapeutic_area")
 
     disease = None
@@ -30,7 +30,7 @@ with top_col1:
 
 # Target Demographics (Middle)
 with top_col2:
-    st.markdown("<h3 style='font-size:28px;'>🎯 Target Demographics (%)</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-size:26px;'>🎯 Target Demographics (%)</h3>", unsafe_allow_html=True)
     total_enrollment = st.number_input("Total Enrollment Target", min_value=0, value=1000, key="total_enrollment")
 
     target_groups = ["Male White", "Female White", "Male African American", "Female African American",
@@ -47,7 +47,6 @@ with top_col2:
     if target_total != 100:
         st.error(f"Target group percentages must total 100%. Current total: {target_total}%")
 
-    # Display overall totals for gender and race
     gender_rollup = {"Male": 0, "Female": 0}
     race_rollup = {"White": 0, "African American": 0, "Hispanic": 0, "Asian": 0, "Other": 0}
 
@@ -66,7 +65,7 @@ with top_col2:
 
 # Current Enrollment (Right)
 with top_col3:
-    st.markdown("<h3 style='font-size:28px;'>📍 Current Enrollment (Count)</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-size:26px;'>📍 Current Enrollment (Count)</h3>", unsafe_allow_html=True)
     current_enrollment = st.number_input("Current Total Enrollment", min_value=0, value=1000, key="current_enrollment")
 
     current_counts = {}
@@ -143,7 +142,9 @@ with table_col:
             "Change Needed (n)": int(abs_change),
             "Change Needed (%)": f"{pct_change:+.1f}%"
         })
-    st.dataframe(pd.DataFrame(table_data))
+    table_df = pd.DataFrame(table_data)
+    table_df = table_df.sort_values(by="Change Needed (n)", ascending=False)
+    st.dataframe(table_df)
 
 # Strategies Section
 st.markdown("---")
@@ -163,31 +164,24 @@ def print_male_strategies():
     st.write("- Reduce perceived stigma around cognitive testing")
 
 def print_race_strategies(race):
-    emoji = {
-        "White": "🧑🏻‍🦱",
-        "African American": "🧑🏿‍🦱",
-        "Hispanic": "🧑🏽‍🦱",
-        "Asian": "🧑🏼‍🦱",
-        "Other": "🧑🏻‍🦱"
-    }.get(race, "👤")
-    st.subheader(f"{emoji} All {race} Participants - Underrepresentation Strategies")
+    st.subheader(f"All {race} Participants - Underrepresentation Strategies")
     st.write("- Emphasize impact on future generations")
     st.write("- Culturally-tailored messaging")
     st.write("- Ensure diverse study team to build trust")
 
-# Group strategies by race and gender
 gender_flags = {"Male": False, "Female": False}
 race_flags = {"White": False, "African American": False, "Hispanic": False, "Asian": False, "Other": False}
 
-for group in target_groups:
-    if group_gap[group] > 0:
+sorted_gaps = sorted(group_gap.items(), key=lambda x: x[1], reverse=True)
+for group, gap in sorted_gaps:
+    if gap > 0:
         gender = group.split()[0]
         race = group[len(gender)+1:]
         if not race_flags[race]:
             print_race_strategies(race)
             race_flags[race] = True
         if not gender_flags[gender]:
-            st.subheader(f"👤 All {gender} Participants - Underrepresentation Strategies")
+            st.subheader(f"All {gender} Participants - Underrepresentation Strategies")
             if gender == "Male":
                 print_male_strategies()
             else:
