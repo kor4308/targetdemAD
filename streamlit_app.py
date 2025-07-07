@@ -24,7 +24,7 @@ with top_col1:
 
 # Target Demographics (Middle)
 with top_col2:
-    st.markdown("## 🎯 Target Demographics")
+    st.markdown("<h3 style='font-size:28px;'>🎯 Target Demographics (%)</h3>", unsafe_allow_html=True)
     total_enrollment = st.number_input("Total Enrollment Target", min_value=0, value=1000, key="total_enrollment")
 
     target_groups = ["Male White", "Female White", "Male African American", "Female African American",
@@ -62,8 +62,8 @@ with top_col2:
 
 # Current Enrollment (Right)
 with top_col3:
-    st.markdown("## 📍 Current Enrollment")
-    current_enrollment = st.number_input("Current Total Enrollment", min_value=0, value=800, key="current_enrollment")
+    st.markdown("<h3 style='font-size:28px;'>📍 Current Enrollment (Count)</h3>", unsafe_allow_html=True)
+    current_enrollment = st.number_input("Current Total Enrollment", min_value=0, value=1000, key="current_enrollment")
 
     current_counts = {}
     current_total = 0
@@ -123,7 +123,7 @@ bar_df = pd.DataFrame(bar_data)
 # Visualization
 graph_col, table_col = st.columns([2, 1])
 with graph_col:
-    fig = px.bar(bar_df, x="Group", y="Count", color="Type", barmode="group",
+    fig = px.bar(bar_df, x="Group", y="Count", color="Type", barmode="stack",
                  color_discrete_map={"Target": "lightgrey", "Current": "steelblue"}, height=400)
     fig.update_layout(title="Enrollment by Race and Gender")
     st.plotly_chart(fig)
