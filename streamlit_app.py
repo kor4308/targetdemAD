@@ -4,26 +4,28 @@ import plotly.express as px
 import pandas as pd
 
 # ---------- Demographic Gap Analyzer ----------
-st.title("Patient Engagement Gap Analyzer and Recruitment Advisor")
+st.title("Patient Engagement Gap Analyzer and Behavioral Sciences Advisor")
 
 # ---------- Top Section Layout ----------
 top_col1, top_col2, top_col3 = st.columns(3)
 
 # Trial Characteristics (Left)
 with top_col1:
-    st.markdown("<h3 style='font-size:24px;'>🧪 Trial Characteristics</h3>", unsafe_allow_html=True)
-    therapeutic_area = st.selectbox("Therapeutic Area", ["Neurodegenerative", "Oncology", "Cardiometabolic"])
+    st.markdown("<h3 style='font-size:28px;'>🧪 Trial Characteristics</h3>", unsafe_allow_html=True)
+    therapeutic_area = st.selectbox("Therapeutic Area", ["Neuro", "Oncology", "Cardiometabolic"], key="therapeutic_area")
 
-    if therapeutic_area == "Neurodegenerative":
-        current_trial = st.selectbox("Current Trial", ["Trailblazer-3", "Other"], key="trial_select")
-        lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"], key="lp_req")
-        pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"], key="pet_req")
-        study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"], key="partner_req")
+    if therapeutic_area == "Neuro":
+        disease = st.selectbox("Disease", ["Alzheimer's", "Other"], key="disease")
+        if disease == "Alzheimer's":
+            current_trial = st.selectbox("Current Trial", ["Trailblazer-3", "Other"], key="trial_select")
+            lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"], key="lp_req")
+            pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"], key="pet_req")
+            study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"], key="partner_req")
 
 # Target Demographics (Middle)
 with top_col2:
     st.markdown("## 🎯 Target Demographics")
-    total_enrollment = st.number_input("Total Enrollment Target", min_value=0, value=1000)
+    total_enrollment = st.number_input("Total Enrollment Target", min_value=0, value=1000, key="total_enrollment")
 
     target_groups = ["Male White", "Female White", "Male African American", "Female African American",
                      "Male Hispanic", "Female Hispanic", "Male Asian", "Female Asian", "Male Other", "Female Other"]
@@ -32,15 +34,33 @@ with top_col2:
     target_total = 0
     for group in target_groups:
         target_counts[group] = st.number_input(f"Target {group} %", 0, 100, 5, key=f"t_{group}")
+        count_val = int(target_counts[group] / 100 * total_enrollment)
+        st.caption(f"{count_val} participants")
         target_total += target_counts[group]
 
     if target_total != 100:
         st.error(f"Target group percentages must total 100%. Current total: {target_total}%")
 
+    # Display overall totals for gender and race
+    gender_rollup = {"Male": 0, "Female": 0}
+    race_rollup = {"White": 0, "African American": 0, "Hispanic": 0, "Asian": 0, "Other": 0}
+
+    for group in target_groups:
+        gender, race = group.split()
+        count_val = target_counts[group] / 100 * total_enrollment
+        gender_rollup[gender] += count_val
+        race_rollup[race] += count_val
+
+    st.markdown("### Overall Totals (Target Enrollment)")
+    for gender, val in gender_rollup.items():
+        st.markdown(f"- {gender}: {int(val)} participants")
+    for race, val in race_rollup.items():
+        st.markdown(f"- {race}: {int(val)} participants")
+
 # Current Enrollment (Right)
 with top_col3:
     st.markdown("## 📍 Current Enrollment")
-    current_enrollment = st.number_input("Current Total Enrollment", min_value=0, value=800)
+    current_enrollment = st.number_input("Current Total Enrollment", min_value=0, value=800, key="current_enrollment")
 
     current_counts = {}
     current_total = 0
