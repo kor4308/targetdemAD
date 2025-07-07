@@ -14,6 +14,12 @@ with top_col1:
     st.markdown("<h3 style='font-size:28px;'>🧪 Trial Characteristics</h3>", unsafe_allow_html=True)
     therapeutic_area = st.selectbox("Therapeutic Area", ["Neuro", "Oncology", "Cardiometabolic"], key="therapeutic_area")
 
+    disease = None
+    current_trial = None
+    lp_required = None
+    pet_required = None
+    study_partner_required = None
+
     if therapeutic_area == "Neuro":
         disease = st.selectbox("Disease", ["Alzheimer's", "Other"], key="disease")
         if disease == "Alzheimer's":
@@ -141,19 +147,30 @@ with table_col:
 
 # Strategies Section
 st.markdown("---")
-st.header("📌 Strategy Recommendations Based on Gaps")
+display_disease = disease if disease else "this condition"
+st.header(f"📌 Strategy Recommendations Based on Gaps in {display_disease}")
 
 def print_female_strategies():
-    st.write("- Connect with Alzheimer's research registries")
+    st.write("- Connect with research registries")
     st.write("- Collaborate with women-led organizations")
     st.write("- Offer flexible scheduling and childcare")
+    if disease == "Alzheimer's" and lp_required == "Yes":
+        st.write("- Educate on difference between lumbar punctures and epidurals to reduce fear")
 
 def print_male_strategies():
     st.write("- Advertise at sports games and male-dominated venues")
     st.write("- Frame participation as contributing to science and legacy")
     st.write("- Reduce perceived stigma around cognitive testing")
 
-def print_race_strategies():
+def print_race_strategies(race):
+    emoji = {
+        "White": "🧑🏻‍🦱",
+        "African American": "🧑🏿‍🦱",
+        "Hispanic": "🧑🏽‍🦱",
+        "Asian": "🧑🏼‍🦱",
+        "Other": "🧑🏻‍🦱"
+    }.get(race, "👤")
+    st.subheader(f"{emoji} All {race} Participants - Underrepresentation Strategies")
     st.write("- Emphasize impact on future generations")
     st.write("- Culturally-tailored messaging")
     st.write("- Ensure diverse study team to build trust")
@@ -167,8 +184,7 @@ for group in target_groups:
         gender = group.split()[0]
         race = group[len(gender)+1:]
         if not race_flags[race]:
-            st.subheader(f"🧑🏽 All {race} Participants - Underrepresentation Strategies")
-            print_race_strategies()
+            print_race_strategies(race)
             race_flags[race] = True
         if not gender_flags[gender]:
             st.subheader(f"👤 All {gender} Participants - Underrepresentation Strategies")
