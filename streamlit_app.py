@@ -14,10 +14,11 @@ with top_col1:
     st.markdown("<h4>🧪 Trial Characteristics</h4>", unsafe_allow_html=True)
     therapeutic_area = st.selectbox("Therapeutic Area", ["Neurodegenerative", "Oncology", "Cardiometabolic"])
 
-        current_trial = st.selectbox("Current Trial", ["Trailblazer-3", "Other"])
-    lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"], key="lp_req")
-    pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"], key="pet_req")
-    study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"], key="partner_req")
+    if therapeutic_area == "Neurodegenerative":
+        current_trial = st.selectbox("Current Trial", ["Trailblazer-3", "Other"], key="trial_select")
+        lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"], key="lp_req")
+        pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"], key="pet_req")
+        study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"], key="partner_req")
 
 # Target Demographics (Middle)
 with top_col2:
