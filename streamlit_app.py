@@ -46,10 +46,8 @@ with top_col2:
     race_rollup = {"White": 0, "African American": 0, "Hispanic": 0, "Asian": 0, "Other": 0}
 
     for group in target_groups:
-        split_parts = group.split()
-        if len(split_parts) != 2:
-            continue
-        gender, race = split_parts
+        gender = group.split()[0]
+        race = group[len(gender)+1:]
         count_val = target_counts[group] / 100 * total_enrollment
         gender_rollup[gender] += count_val
         race_rollup[race] += count_val
@@ -99,10 +97,8 @@ race_totals = {"White": 0, "African American": 0, "Hispanic": 0, "Asian": 0, "Ot
 current_race_totals = {"White": 0, "African American": 0, "Hispanic": 0, "Asian": 0, "Other": 0}
 
 for group in target_groups:
-    split_parts = group.split()
-    if len(split_parts) != 2:
-        continue
-    gender, race = split_parts
+    gender = group.split()[0]
+    race = group[len(gender)+1:]
     race_totals[race] += target_counts[group] / 100 * total_enrollment
     current_race_totals[race] += current_counts[group]
     gender_totals[gender] += target_counts[group] / 100 * total_enrollment
@@ -123,8 +119,8 @@ bar_df = pd.DataFrame(bar_data)
 # Visualization
 graph_col, table_col = st.columns([2, 1])
 with graph_col:
-    fig = px.bar(bar_df, x="Group", y="Count", color="Type", barmode="stack",
-                 color_discrete_map={"Target": "lightgrey", "Current": "steelblue"}, height=400)
+    fig = px.bar(bar_df, x="Group", y="Count", color="Type", barmode="overlay",
+                 color_discrete_map={"Target": "lightgrey", "Current": "steelblue"}, height=400, opacity=0.7)
     fig.update_layout(title="Enrollment by Race and Gender")
     st.plotly_chart(fig)
 
@@ -168,10 +164,8 @@ race_flags = {"White": False, "African American": False, "Hispanic": False, "Asi
 
 for group in target_groups:
     if group_gap[group] > 0:
-        split_parts = group.split()
-        if len(split_parts) != 2:
-            continue
-        gender, race = split_parts
+        gender = group.split()[0]
+        race = group[len(gender)+1:]
         if not race_flags[race]:
             st.subheader(f"🧑🏽 All {race} Participants - Underrepresentation Strategies")
             print_race_strategies()
