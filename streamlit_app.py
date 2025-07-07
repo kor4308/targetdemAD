@@ -4,14 +4,16 @@ import plotly.express as px
 import pandas as pd
 
 # ---------- Demographic Gap Analyzer ----------
-st.title("Alzheimer's Disease Persona & Recruitment Analyzer")
+st.title("Patient Engagement Gap Analyzer and Recruitment Advisor")
 
 # ---------- Top Section Layout ----------
 top_col1, top_col2, top_col3 = st.columns(3)
 
 # Trial Characteristics (Left)
 with top_col1:
-    st.markdown("## 🧪 Trial Characteristics")
+    st.markdown("<h4>🧪 Trial Characteristics</h4>", unsafe_allow_html=True)
+    if therapeutic_area == \"Neurodegenerative\":
+        st.markdown("**Current Trial:** Trailblazer-3")
     therapeutic_area = st.selectbox("Therapeutic Area", ["Neurodegenerative", "Oncology", "Cardiometabolic"])
 
     if therapeutic_area == "Neurodegenerative":
@@ -59,4 +61,83 @@ with top_col3:
 st.markdown(f"**🎯 Target Total Enrollment:** {total_enrollment} participants")
 st.markdown(f"**📍 Current Total Enrollment:** {current_enrollment} participants")
 
-# The rest of your code remains unchanged...
+# ---------- Enrollment Visualization & Strategies ----------
+
+# Gender gap calculation
+gender_gap = {
+    "Female": target_female / 100 * total_enrollment - current_female / 100 * current_enrollment,
+    "Male": target_male / 100 * total_enrollment - current_male / 100 * current_enrollment
+}
+
+# Race gap calculation
+race_gap = {}
+for race in races:
+    target_count = target_race[race] / 100 * total_enrollment
+    current_count = current_race[race] / 100 * current_enrollment
+    race_gap[race] = target_count - current_count
+
+# Visualization prep
+groups = ["Female", "Male"] + races
+target_counts = [target_female, target_male] + [target_race[r] for r in races]
+target_counts = [v / 100 * total_enrollment for v in target_counts]
+current_counts = [current_female, current_male] + [current_race[r] for r in races]
+current_counts = [v / 100 * current_enrollment for v in current_counts]
+diffs = [target_counts[i] - current_counts[i] for i in range(len(groups))]
+
+# Only show underrepresented gaps
+graph_col, table_col = st.columns([2, 1])
+with graph_col:
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        x=groups,
+        y=target_counts,
+        name='Target',
+        marker_color='lightgrey'
+    ))
+    fig.add_trace(go.Bar(
+        x=groups,
+        y=current_counts,
+        name='Current',
+        marker_color='steelblue'
+    ))
+    fig.update_layout(barmode='overlay', title='Enrollment by Group', height=400)
+    st.plotly_chart(fig)
+
+with table_col:
+    st.markdown("#### 📋 Enrollment Table")
+    table_data = []
+    for i, label in enumerate(groups):
+        abs_change = diffs[i]
+        pct_change = (abs_change / target_counts[i]) * 100 if target_counts[i] != 0 else 0
+        table_data.append({
+            "Group": label,
+            "Target Count": int(target_counts[i]),
+            "Current Count": int(current_counts[i]),
+            "Change Needed (n)": int(abs_change),
+            "Change Needed (%)": f"{pct_change:+.1f}%"
+        })
+    st.dataframe(pd.DataFrame(table_data))
+
+# Strategies Section
+st.markdown("---")
+st.header("📌 Strategy Recommendations Based on Gaps")
+
+if gender_gap["Female"] > 0:
+    st.subheader("👩 Female Underrepresentation Strategies")
+    st.write("- Connect with Alzheimer's research registries")
+    st.write("- Collaborate with women-led organizations")
+    st.write("- Emphasize legacy/future generation impact")
+    st.write("- Offer flexible scheduling and childcare")
+
+if gender_gap["Male"] > 0:
+    st.subheader("👨 Male Underrepresentation Strategies")
+    st.write("- Advertise at sports games and male-dominated venues")
+    st.write("- Frame participation as contributing to science and legacy")
+    st.write("- Reduce perceived stigma around cognitive testing")
+
+for race in races:
+    if race_gap[race] > 0:
+        st.subheader(f"🧑🏽 {race} Underrepresentation Strategies")
+        st.write("- Emphasize impact on future generations")
+        st.write("- Culturally-tailored messaging")
+        st.write("- Ensure diverse study team to build trust")
