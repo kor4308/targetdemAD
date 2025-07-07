@@ -15,15 +15,10 @@ with top_col1:
     therapeutic_area = st.selectbox("Therapeutic Area", ["Neurodegenerative", "Oncology", "Cardiometabolic"])
 
     if therapeutic_area == "Neurodegenerative":
-        current_trial = st.selectbox("Current Trial", ["Trailblazer-3", "Other"])
-        lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"])
-        pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"])
-        study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"])
-
-    if therapeutic_area == "Neurodegenerative":
-        lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"])
-        pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"])
-        study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"])
+    current_trial = st.selectbox("Current Trial", ["Trailblazer-3", "Other"])
+    lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"])
+    pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"])
+    study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"])
 
 # Target Demographics (Middle)
 with top_col2:
