@@ -11,7 +11,7 @@ top_col1, top_col2, top_col3 = st.columns(3)
 
 # Trial Characteristics (Left)
 with top_col1:
-    st.markdown("<h4>🧪 Trial Characteristics</h4>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-size:22px;'>🧪 Trial Characteristics</h3>", unsafe_allow_html=True)
     therapeutic_area = st.selectbox("Therapeutic Area", ["Neurodegenerative", "Oncology", "Cardiometabolic"])
 
     if therapeutic_area == "Neurodegenerative":
@@ -25,77 +25,64 @@ with top_col2:
     st.markdown("## 🎯 Target Demographics")
     total_enrollment = st.number_input("Total Enrollment Target", min_value=0, value=1000)
 
-    target_female = st.number_input("Target Female %", 0, 100, 55)
-    target_male = 100 - target_female
-    st.markdown(f"**Target Male %**: {target_male}")
+    target_groups = ["Male White", "Female White", "Male African American", "Female African American",
+                     "Male Hispanic", "Female Hispanic", "Male Asian", "Female Asian", "Male Other", "Female Other"]
 
-    races = ["White", "African American", "Hispanic", "Asian", "Other"]
-    target_race = {}
-    default_target_race = {"White": 55, "African American": 25, "Hispanic": 10, "Asian": 5, "Other": 5}
+    target_counts = {}
     target_total = 0
-    for race in races:
-        target_race[race] = st.number_input(f"Target {race}", 0, 100, default_target_race[race], key=f"t_{race}")
-        target_total += target_race[race]
+    for group in target_groups:
+        target_counts[group] = st.number_input(f"Target {group} %", 0, 100, 5, key=f"t_{group}")
+        target_total += target_counts[group]
+
     if target_total != 100:
-        st.error(f"Target race percentages must total 100%. Current total: {target_total}%")
+        st.error(f"Target group percentages must total 100%. Current total: {target_total}%")
 
 # Current Enrollment (Right)
 with top_col3:
     st.markdown("## 📍 Current Enrollment")
     current_enrollment = st.number_input("Current Total Enrollment", min_value=0, value=800)
 
-    current_female = st.number_input("Currently Enrolled Female %", 0, 100, 40)
-    current_male = 100 - current_female
-    st.markdown(f"**Currently Enrolled Male %**: {current_male}")
-
-    current_race = {}
-    default_current_race = {"White": 55, "African American": 25, "Hispanic": 10, "Asian": 5, "Other": 5}
+    current_counts = {}
     current_total = 0
-    for race in races:
-        current_race[race] = st.number_input(f"Current {race}", 0, 100, default_current_race[race], key=f"c_{race}")
-        current_total += current_race[race]
+    for group in target_groups:
+        current_counts[group] = st.number_input(f"Current {group} %", 0, 100, 5, key=f"c_{group}")
+        current_total += current_counts[group]
+
     if current_total != 100:
-        st.error(f"Current race percentages must total 100%. Current total: {current_total}%")
+        st.error(f"Current group percentages must total 100%. Current total: {current_total}%")
 
 st.markdown(f"**🎯 Target Total Enrollment:** {total_enrollment} participants")
 st.markdown(f"**📍 Current Total Enrollment:** {current_enrollment} participants")
 
 # ---------- Enrollment Visualization & Strategies ----------
 
-# Gender gap calculation
-gender_gap = {
-    "Female": target_female / 100 * total_enrollment - current_female / 100 * current_enrollment,
-    "Male": target_male / 100 * total_enrollment - current_male / 100 * current_enrollment
-}
+group_gap = {}
+target_vals = []
+current_vals = []
+diffs = []
 
-# Race gap calculation
-race_gap = {}
-for race in races:
-    target_count = target_race[race] / 100 * total_enrollment
-    current_count = current_race[race] / 100 * current_enrollment
-    race_gap[race] = target_count - current_count
+for group in target_groups:
+    t_count = target_counts[group] / 100 * total_enrollment
+    c_count = current_counts[group] / 100 * current_enrollment
+    target_vals.append(t_count)
+    current_vals.append(c_count)
+    diff = t_count - c_count
+    diffs.append(diff)
+    group_gap[group] = diff
 
-# Visualization prep
-groups = ["Female", "Male"] + races
-target_counts = [target_female, target_male] + [target_race[r] for r in races]
-target_counts = [v / 100 * total_enrollment for v in target_counts]
-current_counts = [current_female, current_male] + [current_race[r] for r in races]
-current_counts = [v / 100 * current_enrollment for v in current_counts]
-diffs = [target_counts[i] - current_counts[i] for i in range(len(groups))]
-
-# Only show underrepresented gaps
+# Visualization
 graph_col, table_col = st.columns([2, 1])
 with graph_col:
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        x=groups,
-        y=target_counts,
+        x=target_groups,
+        y=target_vals,
         name='Target',
         marker_color='lightgrey'
     ))
     fig.add_trace(go.Bar(
-        x=groups,
-        y=current_counts,
+        x=target_groups,
+        y=current_vals,
         name='Current',
         marker_color='steelblue'
     ))
@@ -105,13 +92,13 @@ with graph_col:
 with table_col:
     st.markdown("#### 📋 Enrollment Table")
     table_data = []
-    for i, label in enumerate(groups):
+    for i, group in enumerate(target_groups):
         abs_change = diffs[i]
-        pct_change = (abs_change / target_counts[i]) * 100 if target_counts[i] != 0 else 0
+        pct_change = (abs_change / target_vals[i]) * 100 if target_vals[i] != 0 else 0
         table_data.append({
-            "Group": label,
-            "Target Count": int(target_counts[i]),
-            "Current Count": int(current_counts[i]),
+            "Group": group,
+            "Target Count": int(target_vals[i]),
+            "Current Count": int(current_vals[i]),
             "Change Needed (n)": int(abs_change),
             "Change Needed (%)": f"{pct_change:+.1f}%"
         })
@@ -121,22 +108,17 @@ with table_col:
 st.markdown("---")
 st.header("📌 Strategy Recommendations Based on Gaps")
 
-if gender_gap["Female"] > 0:
-    st.subheader("👩 Female Underrepresentation Strategies")
-    st.write("- Connect with Alzheimer's research registries")
-    st.write("- Collaborate with women-led organizations")
-    st.write("- Emphasize legacy/future generation impact")
-    st.write("- Offer flexible scheduling and childcare")
-
-if gender_gap["Male"] > 0:
-    st.subheader("👨 Male Underrepresentation Strategies")
-    st.write("- Advertise at sports games and male-dominated venues")
-    st.write("- Frame participation as contributing to science and legacy")
-    st.write("- Reduce perceived stigma around cognitive testing")
-
-for race in races:
-    if race_gap[race] > 0:
-        st.subheader(f"🧑🏽 {race} Underrepresentation Strategies")
+for group in target_groups:
+    if group_gap[group] > 0:
+        st.subheader(f"🧑🏽 {group} Underrepresentation Strategies")
         st.write("- Emphasize impact on future generations")
         st.write("- Culturally-tailored messaging")
         st.write("- Ensure diverse study team to build trust")
+        if "Male" in group:
+            st.write("- Advertise at sports games and male-dominated venues")
+            st.write("- Frame participation as contributing to science and legacy")
+            st.write("- Reduce perceived stigma around cognitive testing")
+        if "Female" in group:
+            st.write("- Connect with Alzheimer's research registries")
+            st.write("- Collaborate with women-led organizations")
+            st.write("- Offer flexible scheduling and childcare")
