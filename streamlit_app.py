@@ -12,9 +12,13 @@ top_col1, top_col2, top_col3 = st.columns(3)
 # Trial Characteristics (Left)
 with top_col1:
     st.markdown("<h4>🧪 Trial Characteristics</h4>", unsafe_allow_html=True)
-    if therapeutic_area == \"Neurodegenerative\":
-        st.markdown("**Current Trial:** Trailblazer-3")
     therapeutic_area = st.selectbox("Therapeutic Area", ["Neurodegenerative", "Oncology", "Cardiometabolic"])
+
+    if therapeutic_area == "Neurodegenerative":
+        current_trial = st.selectbox("Current Trial", ["Trailblazer-3", "Other"])
+        lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"])
+        pet_required = st.selectbox("PET Scans Required?", ["Yes", "No"])
+        study_partner_required = st.selectbox("Study Partner Required?", ["Yes", "No"])
 
     if therapeutic_area == "Neurodegenerative":
         lp_required = st.selectbox("Lumbar Punctures Required?", ["Yes", "No"])
