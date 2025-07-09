@@ -150,25 +150,7 @@ with table_col:
 st.markdown("---")
 display_disease = disease if disease else "this condition"
 st.header(f"📌 Strategy Recommendations Based on Gaps in {display_disease}")
-st.caption("🔽 Ordered from Largest to Smallest Gap")
-
-emoji_map = {
-    "White": "🧑🏻",
-    "African American": "🧑🏿",
-    "Hispanic": "🧑🏽",
-    "Asian": "🧑🏻‍🦱",
-    "Other": "🧑🏻",
-    "Male": "👨🏻👨🏿👨🏽👨🏻‍🦱",
-    "Female": "👩🏻👩🏿👩🏽👩🏻‍🦱"
-}
-
-race_gender_emoji_map = {
-    "White": "👨🏻👩🏻",
-    "African American": "👨🏿👩🏿",
-    "Hispanic": "👨🏽👩🏽",
-    "Asian": "👨🏻‍🦱👩🏻‍🦱",
-    "Other": "🧑🏻🧑🏻"
-}
+st.caption("⬆️ Ordered from largest to smallest gap")
 
 def print_female_strategies():
     st.write("- Connect with research registries")
@@ -183,7 +165,7 @@ def print_male_strategies():
     st.write("- Reduce perceived stigma around cognitive testing")
 
 def print_race_strategies(race):
-    st.subheader(f"{race_gender_emoji_map[race]} {race} Participants - Underrepresentation Strategies")
+    st.subheader(f"Strategies to reach {race} Participants")
     st.write("- Emphasize impact on future generations")
     st.write("- Culturally-tailored messaging")
     st.write("- Ensure diverse study team to build trust")
@@ -200,7 +182,7 @@ for group, gap in sorted_gaps:
             print_race_strategies(race)
             race_flags[race] = True
         if not gender_flags[gender]:
-            st.subheader(f"{emoji_map[gender]} {gender} Participants - Underrepresentation Strategies")
+            st.subheader(f"Strategies to reach {gender} Participants")
             if gender == "Male":
                 print_male_strategies()
             else:
