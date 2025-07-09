@@ -39,7 +39,7 @@ with top_col2:
     target_gender_diverse = 100 - target_gender_male - target_gender_female
     st.markdown(f"Target Gender-Diverse %: **{target_gender_diverse}%**")
 
-    st.markdown("<br>", unsafe_allow_html=True)  # Add spacing
+    st.markdown("<br><br>", unsafe_allow_html=True)  # Add spacing
 
     st.subheader("Race Distribution")
     race_categories = [
@@ -139,19 +139,32 @@ if disease == "Alzheimer's":
 else:
     st.header("💡 General Strategy Recommendations Based on Gaps")
 
-# Sample Strategy Recommendations
 underrepresented = bar_data[bar_data['Current'] < bar_data['Target']].copy()
 underrepresented['Gap'] = underrepresented['Target'] - underrepresented['Current']
 underrepresented = underrepresented.sort_values(by='Gap', ascending=False)
 
-for _, row in underrepresented.iterrows():
-    st.subheader(f"Strategies to reach {row['Group']}")
-    if row['Group'] in ["Female"] and disease == "Alzheimer's" and lp_required == "Yes":
-        st.markdown("- Educate about the difference between lumbar punctures and epidurals to reduce fear and misconceptions.")
-    st.markdown("- Emphasize legacy/future generation impact")
-    st.markdown("- Provide culturally-tailored messaging")
-    st.markdown("- Ensure diverse trial staff to increase comfort and trust")
-    if row['Group'] == "Male":
-        st.markdown("- Advertise at sports games and male-focused community events")
-    st.markdown("- Partner with trusted community leaders")
-    st.markdown("- Leverage research registries")
+if not underrepresented.empty:
+    st.caption("🔻 Ordered by largest to smallest gap")
+    st.subheader("Gender-Based Strategies")
+    for _, row in underrepresented.iterrows():
+        if row['Group'] in ["Male", "Female", "Gender-Diverse"]:
+            st.markdown(f"**Strategies to reach {row['Group']}**")
+            if row['Group'] == "Female" and disease == "Alzheimer's" and lp_required == "Yes":
+                st.markdown("- Educate about the difference between lumbar punctures and epidurals to reduce fear and misconceptions.")
+            if row['Group'] == "Male":
+                st.markdown("- Advertise at sports games and male-focused community events")
+            st.markdown("- Emphasize legacy/future generation impact")
+            st.markdown("- Provide culturally-tailored messaging")
+            st.markdown("- Ensure diverse trial staff to increase comfort and trust")
+            st.markdown("- Partner with trusted community leaders")
+            st.markdown("- Leverage research registries")
+
+    st.subheader("Race-Based Strategies")
+    for _, row in underrepresented.iterrows():
+        if row['Group'] not in ["Male", "Female", "Gender-Diverse"]:
+            st.markdown(f"**Strategies to reach {row['Group']}**")
+            st.markdown("- Emphasize legacy/future generation impact")
+            st.markdown("- Provide culturally-tailored messaging")
+            st.markdown("- Ensure diverse trial staff to increase comfort and trust")
+            st.markdown("- Partner with trusted community leaders")
+            st.markdown("- Leverage research registries")
