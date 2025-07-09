@@ -34,9 +34,10 @@ with top_col2:
     total_enrollment = st.number_input("Total Enrollment Target", min_value=0, value=1000, key="total_enrollment")
 
     st.subheader("Gender Distribution")
-    target_gender_male = st.number_input("Target Male %", 0, 100, 50, key="target_male")
-    target_gender_female = 100 - target_gender_male
-    st.markdown(f"Target Female %: **{target_gender_female}%**")
+    target_gender_male = st.number_input("Target Male %", 0, 100, 45, key="target_male")
+    target_gender_female = st.number_input("Target Female %", 0, 100 - target_gender_male, 45, key="target_female")
+    target_gender_diverse = 100 - target_gender_male - target_gender_female
+    st.markdown(f"Target Gender-Diverse %: **{target_gender_diverse}%**")
 
     st.subheader("Race Distribution")
     race_categories = [
@@ -62,6 +63,7 @@ with top_col2:
     st.markdown("### Overall Totals (Target Enrollment)")
     st.markdown(f"- Male: {int(target_gender_male / 100 * total_enrollment)} participants")
     st.markdown(f"- Female: {int(target_gender_female / 100 * total_enrollment)} participants")
+    st.markdown(f"- Gender-Diverse: {int(target_gender_diverse / 100 * total_enrollment)} participants")
     for race in race_categories:
         st.markdown(f"- {race}: {int(target_race[race] / 100 * total_enrollment)} participants")
 
@@ -71,10 +73,11 @@ with top_col3:
     current_enrollment = st.number_input("Current Total Enrollment", min_value=0, value=1000, key="current_enrollment")
 
     st.subheader("Gender Distribution")
-    current_gender_male = st.number_input("Current Male Count", 0, value=500, key="current_male")
-    current_gender_female = current_enrollment - current_gender_male
-    st.markdown(f"Current Female Count: **{current_gender_female}**")
-    st.caption(f"{(current_gender_female / current_enrollment) * 100:.1f}%")
+    current_gender_male = st.number_input("Current Male Count", 0, value=450, key="current_male")
+    current_gender_female = st.number_input("Current Female Count", 0, value=450, key="current_female")
+    current_gender_diverse = current_enrollment - current_gender_male - current_gender_female
+    st.markdown(f"Current Gender-Diverse Count: **{current_gender_diverse}**")
+    st.caption(f"{(current_gender_diverse / current_enrollment) * 100:.1f}%")
 
     st.subheader("Race Distribution")
     current_race = {}
@@ -88,4 +91,42 @@ with top_col3:
 st.markdown(f"**🎯 Target Total Enrollment:** {total_enrollment} participants")
 st.markdown(f"**📍 Current Total Enrollment:** {current_enrollment} participants")
 
-# --- Continue with rest of code logic (recalculating gaps, charts, and strategy recommendations) ---
+# Add bar chart visualizing gaps
+bar_data = pd.DataFrame({
+    "Group": ["Male", "Female", "Gender-Diverse"] + race_categories,
+    "Target": [
+        int(target_gender_male / 100 * total_enrollment),
+        int(target_gender_female / 100 * total_enrollment),
+        int(target_gender_diverse / 100 * total_enrollment)
+    ] + [int(target_race[r] / 100 * total_enrollment) for r in race_categories],
+    "Current": [
+        current_gender_male,
+        current_gender_female,
+        current_gender_diverse
+    ] + [current_race[r] for r in race_categories]
+})
+
+fig = go.Figure()
+fig.add_trace(go.Bar(
+    y=bar_data["Group"],
+    x=bar_data["Target"],
+    orientation='h',
+    name='Target',
+    marker_color='lightgrey'
+))
+fig.add_trace(go.Bar(
+    y=bar_data["Group"],
+    x=bar_data["Current"],
+    orientation='h',
+    name='Current',
+    marker_color='steelblue'
+))
+
+fig.update_layout(
+    barmode='overlay',
+    title="Target vs Current Enrollment by Group",
+    xaxis_title="Participant Count",
+    height=600
+)
+
+st.plotly_chart(fig)
