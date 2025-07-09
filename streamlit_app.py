@@ -39,7 +39,7 @@ with top_col2:
     target_gender_diverse = 100 - target_gender_male - target_gender_female
     st.markdown(f"Target Gender-Diverse %: **{target_gender_diverse}%**")
 
-    st.markdown("<br><br>", unsafe_allow_html=True)  # Add spacing
+    st.markdown("<br><br><br><br>", unsafe_allow_html=True)  # Add extra spacing for alignment
 
     st.subheader("Race Distribution")
     race_categories = [
