@@ -303,6 +303,4 @@ st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring in
 st.markdown("### Other Recruitment Strategies")
 st.markdown("- Culturally tailored materials")
 st.markdown("- Address transportation and time barriers")
-st.markdown("- Engage community leaders and local organizations")st.markdown("- Culturally tailored materials")
-st.markdown("- Address transportation and time barriers")
 st.markdown("- Engage community leaders and local organizations")
