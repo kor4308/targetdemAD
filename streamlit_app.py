@@ -283,7 +283,7 @@ st.markdown("---")
 st.subheader("General Motivators and Barriers for (Select)")
 st.markdown("### Asian Recruitment Strategies")
 st.markdown("- Leverage trusted community centers and Asian language media")
-st.markdown("- Emphasize confidentiality, physician trust, and family involvement")
+st.markdown("- Emphasize that memory loss is not just a part of the aging process")
 
 st.markdown("### Hispanic Recruitment Strategies")
 st.markdown("- Use Spanish-language materials and bilingual coordinators")
