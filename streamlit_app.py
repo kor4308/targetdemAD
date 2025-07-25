@@ -104,6 +104,8 @@ DISEASE_PREVALENCE = {
 
 st.title("US vs Target Demographic Comparator")
 
+time_period = None  # Ensure time_period is always defined
+
 therapeutic_area = st.selectbox("Select Therapeutic Area", ["(Select)", "Neuro", "Oncology", "Cardiometabolic"], index=0)
 disease = st.selectbox("Select Disease", ["(Select)", "Alzheimer's", "Bipolar Disorder", "Schizophrenia", "Other"], index=0)
 if disease == "Alzheimer's":
@@ -177,6 +179,7 @@ with col2:
 
 with col3:
     with st.expander("📍 Current Enrollment (Count)"):
+        current_enrollment = 1000
         if trial == "Reveli" and time_period == "August 2025":
             current_gender_male = 400
             current_gender_female = 100
