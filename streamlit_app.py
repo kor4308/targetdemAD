@@ -274,42 +274,4 @@ st.markdown("- Emphasize confidentiality, physician trust, and family involvemen
 st.markdown("### Other Recruitment Strategies")
 st.markdown("- Culturally tailored materials")
 st.markdown("- Address transportation and time barriers")
-st.markdown("- Engage community leaders and local organizations")        current_enrollment = 1000
-        if trial == "Reveli" and time_period == "August 2025":
-            current_gender_male = 400
-            current_gender_female = 100
-            current_gender_diverse = 1000 - current_gender_male - current_gender_female
-            current_race = {
-                "Hispanic": 199,
-                "White, NH": 500,
-                "African American": 180,
-                "Asian, NH": 5,
-                "AIAN, NH": 7,
-                "NHPI, NH": 2,
-                "Other": 8
-            }
-        elif trial == "Reveli" and time_period == "January 2026":
-            current_gender_male = 360
-            current_gender_female = 640
-            current_gender_diverse = 1000 - current_gender_male - current_gender_female
-            current_race = {
-                "Hispanic": 212,
-                "White, NH": 517,
-                "African American": 192,
-                "Asian, NH": 59,
-                "AIAN, NH": 8,
-                "NHPI, NH": 3,
-                "Other": 9
-            }
-        else:
-            current_gender_male = st.number_input("Current Male Count", 0, value=450, key="current_male")
-            current_gender_female = st.number_input("Current Female Count", 0, value=450, key="current_female")
-            current_gender_diverse = 1000 - current_gender_male - current_gender_female
-            st.markdown(f"Current Gender-Diverse Count: **{current_gender_diverse}**")
-            st.caption(f"{(current_gender_diverse / 1000) * 100:.1f}%")
-            st.subheader("Race Distribution")
-            current_race = {}
-            for race in race_categories:
-                current_race[race] = st.number_input(f"Current {race} Count", 0, value=80, key=f"c_{race}")
-                percent_val = (current_race[race] / 1000) * 100
-                st.caption(f"{percent_val:.1f}%")
+st.markdown("- Engage community leaders and local organizations")
