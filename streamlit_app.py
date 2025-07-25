@@ -183,7 +183,7 @@ with col3:
         current_enrollment = 1000
         if trial == "Reveli" and time_period == "August 2025":
             current_gender_male = 400
-            current_gender_female = 100
+            current_gender_female = 550
             current_gender_diverse = 1000 - current_gender_male - current_gender_female
             current_race = {
                 "Hispanic": 199,
