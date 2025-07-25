@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import plotly.graph_objects as go
+import plotly.express as px
 import math
 
 st.set_page_config(layout="wide")
@@ -280,27 +282,51 @@ with col3.expander("📍 Current Enrollment (Count)"):
                 st.text(f"{key}: Target = {target_n:.1f}, Screen Success Rate = {screen_success_rate:.2f}, Eligible Pop = {eligible_pop}, Screened Needed = {screened_needed}, Percent = {screen_percent:.3f}%")
 
 
-# --- Bar Chart Comparing US vs Target Demographics ---
-gender_us = pd.Series(current_us["Gender"])
-gender_target = pd.Series(target["Gender"])
-race_us = pd.Series(current_us["Race"])
-race_target = pd.Series(target["Race"])
+# --- Bar Chart Comparing Target vs Current Enrollment ---
+target_gender_male = st.session_state.get("gender_Male", target["Gender"].get("Male", 0))
+target_gender_female = st.session_state.get("gender_Female", target["Gender"].get("Female", 0))
+target_gender_diverse = 100 - target_gender_male - target_gender_female
 
-st.markdown("---")
-st.subheader("🎯 US vs. Target Demographics Chart")
-st.caption("Visual comparison between US population and your trial targets")
+bar_data = pd.DataFrame({
+    "Group": ["Male", "Female", "Gender-Diverse"] + race_categories,
+    "Target": [
+        int(target_gender_male / 100 * total_enroll),
+        int(target_gender_female / 100 * total_enroll),
+        int(target_gender_diverse / 100 * total_enroll)
+    ] + [int(st.session_state.get(f"race_{r}", target["Race"].get(r, 0)) / 100 * total_enroll) for r in race_categories],
+    "Current": [
+        current_gender_male,
+        current_gender_female,
+        current_gender_diverse
+    ] + [current_race[r] for r in race_categories]
+})
 
-bar_df = pd.DataFrame({
-    "US (Gender) %": gender_us,
-    "Target (Gender) %": gender_target
-}).reset_index().rename(columns={"index": "Gender"})
-st.bar_chart(bar_df.set_index("Gender"))
+import plotly.graph_objects as go
 
-bar_df_race = pd.DataFrame({
-    "US (Race) %": race_us,
-    "Target (Race) %": race_target
-}).reset_index().rename(columns={"index": "Race"})
-st.bar_chart(bar_df_race.set_index("Race"))
+fig = go.Figure()
+fig.add_trace(go.Bar(
+    y=bar_data["Group"],
+    x=bar_data["Target"],
+    orientation='h',
+    name='Target',
+    marker_color='lightgrey'
+))
+fig.add_trace(go.Bar(
+    y=bar_data["Group"],
+    x=bar_data["Current"],
+    orientation='h',
+    name='Current',
+    marker_color='steelblue'
+))
+
+fig.update_layout(
+    barmode='overlay',
+    title="Target vs Current Enrollment by Group",
+    xaxis_title="Participant Count",
+    height=600
+)
+
+st.plotly_chart(fig)
 
 # --- General Recruitment Strategies Section ---
 st.markdown("---")
