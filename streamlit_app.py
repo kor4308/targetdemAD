@@ -176,6 +176,9 @@ else:
 
 total_disease_pop = DISEASE_TOTALS.get(pop_key, US_TOTAL_POP)
 
+# Dynamically get race categories from selected target
+race_categories = list(target["Race"].keys())
+
 
 
 
