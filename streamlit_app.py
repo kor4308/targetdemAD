@@ -219,3 +219,97 @@ with col3:
                 current_race[race] = st.number_input(f"Current {race} Count", 0, value=80, key=f"c_{race}")
                 percent_val = (current_race[race] / 1000) * 100
                 st.caption(f"{percent_val:.1f}%")
+
+# --- Horizontal Bar Chart ---
+target_gender_male = st.session_state.get("gender_Male", target["Gender"].get("Male", 0))
+target_gender_female = st.session_state.get("gender_Female", target["Gender"].get("Female", 0))
+target_gender_diverse = 100 - target_gender_male - target_gender_female
+
+bar_data = pd.DataFrame({
+    "Group": ["Male", "Female", "Gender-Diverse"] + race_categories,
+    "Target": [
+        int(target_gender_male / 100 * total_enroll),
+        int(target_gender_female / 100 * total_enroll),
+        int(target_gender_diverse / 100 * total_enroll)
+    ] + [int(st.session_state.get(f"race_{r}", target["Race"].get(r, 0)) / 100 * total_enroll) for r in race_categories],
+    "Current": [
+        current_gender_male,
+        current_gender_female,
+        current_gender_diverse
+    ] + [current_race[r] for r in race_categories]
+})
+
+fig = go.Figure()
+fig.add_trace(go.Bar(
+    y=bar_data["Group"],
+    x=bar_data["Target"],
+    orientation='h',
+    name='Target',
+    marker_color='lightgrey'
+))
+fig.add_trace(go.Bar(
+    y=bar_data["Group"],
+    x=bar_data["Current"],
+    orientation='h',
+    name='Current',
+    marker_color='steelblue'
+))
+
+fig.update_layout(
+    barmode='overlay',
+    title="Target vs Current Enrollment by Group",
+    xaxis_title="Participant Count",
+    height=600
+)
+
+st.plotly_chart(fig)
+
+# --- Recruitment Strategies ---
+st.markdown("---")
+st.subheader("General Motivators and Barriers for (Select)")
+st.markdown("### Asian Recruitment Strategies")
+st.markdown("- Leverage trusted community centers and Asian language media")
+st.markdown("- Emphasize confidentiality, physician trust, and family involvement")
+
+st.markdown("### Other Recruitment Strategies")
+st.markdown("- Culturally tailored materials")
+st.markdown("- Address transportation and time barriers")
+st.markdown("- Engage community leaders and local organizations")        current_enrollment = 1000
+        if trial == "Reveli" and time_period == "August 2025":
+            current_gender_male = 400
+            current_gender_female = 100
+            current_gender_diverse = 1000 - current_gender_male - current_gender_female
+            current_race = {
+                "Hispanic": 199,
+                "White, NH": 500,
+                "African American": 180,
+                "Asian, NH": 5,
+                "AIAN, NH": 7,
+                "NHPI, NH": 2,
+                "Other": 8
+            }
+        elif trial == "Reveli" and time_period == "January 2026":
+            current_gender_male = 360
+            current_gender_female = 640
+            current_gender_diverse = 1000 - current_gender_male - current_gender_female
+            current_race = {
+                "Hispanic": 212,
+                "White, NH": 517,
+                "African American": 192,
+                "Asian, NH": 59,
+                "AIAN, NH": 8,
+                "NHPI, NH": 3,
+                "Other": 9
+            }
+        else:
+            current_gender_male = st.number_input("Current Male Count", 0, value=450, key="current_male")
+            current_gender_female = st.number_input("Current Female Count", 0, value=450, key="current_female")
+            current_gender_diverse = 1000 - current_gender_male - current_gender_female
+            st.markdown(f"Current Gender-Diverse Count: **{current_gender_diverse}**")
+            st.caption(f"{(current_gender_diverse / 1000) * 100:.1f}%")
+            st.subheader("Race Distribution")
+            current_race = {}
+            for race in race_categories:
+                current_race[race] = st.number_input(f"Current {race} Count", 0, value=80, key=f"c_{race}")
+                percent_val = (current_race[race] / 1000) * 100
+                st.caption(f"{percent_val:.1f}%")
