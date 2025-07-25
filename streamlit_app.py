@@ -105,6 +105,7 @@ DISEASE_PREVALENCE = {
 st.title("US vs Target Demographic Comparator")
 
 time_period = None  # Ensure time_period is always defined
+trial = None  # Ensure trial is always defined
 
 therapeutic_area = st.selectbox("Select Therapeutic Area", ["(Select)", "Neuro", "Oncology", "Cardiometabolic"], index=0)
 disease = st.selectbox("Select Disease", ["(Select)", "Alzheimer's", "Bipolar Disorder", "Schizophrenia", "Other"], index=0)
