@@ -280,6 +280,28 @@ with col3.expander("📍 Current Enrollment (Count)"):
                 st.text(f"{key}: Target = {target_n:.1f}, Screen Success Rate = {screen_success_rate:.2f}, Eligible Pop = {eligible_pop}, Screened Needed = {screened_needed}, Percent = {screen_percent:.3f}%")
 
 
+# --- Bar Chart Comparing US vs Target Demographics ---
+gender_us = pd.Series(current_us["Gender"])
+gender_target = pd.Series(target["Gender"])
+race_us = pd.Series(current_us["Race"])
+race_target = pd.Series(target["Race"])
+
+st.markdown("---")
+st.subheader("🎯 US vs. Target Demographics Chart")
+st.caption("Visual comparison between US population and your trial targets")
+
+bar_df = pd.DataFrame({
+    "US (Gender) %": gender_us,
+    "Target (Gender) %": gender_target
+}).reset_index().rename(columns={"index": "Gender"})
+st.bar_chart(bar_df.set_index("Gender"))
+
+bar_df_race = pd.DataFrame({
+    "US (Race) %": race_us,
+    "Target (Race) %": race_target
+}).reset_index().rename(columns={"index": "Race"})
+st.bar_chart(bar_df_race.set_index("Race"))
+
 # --- General Recruitment Strategies Section ---
 st.markdown("---")
 st.header(f"General Motivators and Barriers for {disease}")
