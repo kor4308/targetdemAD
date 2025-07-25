@@ -126,7 +126,7 @@ fig.add_trace(go.Bar(
 
 fig.update_layout(
     barmode='overlay',
-    title="Target vs Current Enrollment by Group",
+    title="Diversity goals for RevEli",
     xaxis_title="Participant Count",
     height=600
 )
