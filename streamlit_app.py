@@ -181,12 +181,7 @@ total_disease_pop = DISEASE_TOTALS.get(pop_key, US_TOTAL_POP)
 
 
 
-        with r_col2:
-            st.subheader("Race")
-            for k, v in target["Race"].items():
-                count = int((v / 100) * disease_total)
-                st.markdown(f"{k}: {v}%")
-                st.caption(f"There are ~{count:,} {k} patients with {disease} in the United States")
+
             
 
 with col2.expander("Target Enrollment Inputs"):
