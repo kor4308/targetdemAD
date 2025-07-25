@@ -109,6 +109,10 @@ disease = st.selectbox("Select Disease", ["(Select)", "Alzheimer's", "Bipolar Di
 if disease == "Alzheimer's":
     trial = st.selectbox("Select Trial", ["(Select)", "Reveli", "South Commons", "Custom"], index=0, key="trial_selection")
 
+    # Add time period dropdown if Reveli is selected
+    if trial == "Reveli":
+        time_period = st.selectbox("Select Time Period", ["August 2025", "October 2025", "January 2026"], index=0, key="reveli_time")
+
 col2, col3 = st.columns([1, 1])
 
 
