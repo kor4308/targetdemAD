@@ -207,6 +207,20 @@ with col3:
                 "NHPI, NH": 3,
                 "Other": 9
             }
+
+        if trial == "Reveli" and time_period in ["August 2025", "January 2026"]:
+            st.subheader("Gender Distribution")
+            st.markdown(f"Current Male Count: **{current_gender_male}**")
+            st.markdown(f"Current Female Count: **{current_gender_female}**")
+            st.markdown(f"Current Gender-Diverse Count: **{current_gender_diverse}**")
+            st.caption(f"{(current_gender_diverse / current_enrollment) * 100:.1f}%")
+
+            st.subheader("Race Distribution")
+            for race in race_categories:
+                count = current_race.get(race, 0)
+                percent_val = (count / current_enrollment) * 100
+                st.markdown(f"**{race}:** {count} participants")
+                st.caption(f"{percent_val:.1f}%")
         else:
             current_gender_male = st.number_input("Current Male Count", 0, value=450, key="current_male")
             current_gender_female = st.number_input("Current Female Count", 0, value=450, key="current_female")
@@ -271,7 +285,24 @@ st.markdown("### Asian Recruitment Strategies")
 st.markdown("- Leverage trusted community centers and Asian language media")
 st.markdown("- Emphasize confidentiality, physician trust, and family involvement")
 
+st.markdown("### Hispanic Recruitment Strategies")
+st.markdown("- Use Spanish-language materials and bilingual coordinators")
+st.markdown("- Partner with local Hispanic/Latino organizations and clinics")
+st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring as these can be barriers.")
+
+st.markdown("### Female Recruitment Strategies")
+st.markdown("- Connect with women's health networks and caregiving support groups")
+st.markdown("- Partner with research registries")
+st.markdown("- Provide flexible study visit schedules or caregiver support")
+
+st.markdown("### African American Recruitment Strategies")
+st.markdown("- Engage trusted faith-based and civic leaders")
+st.markdown("- Highlight historical medical distrust and steps taken to ensure ethical practices")
+st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring inclusion criteria as these can be inequitable barriers.")
+
 st.markdown("### Other Recruitment Strategies")
 st.markdown("- Culturally tailored materials")
+st.markdown("- Address transportation and time barriers")
+st.markdown("- Engage community leaders and local organizations")st.markdown("- Culturally tailored materials")
 st.markdown("- Address transportation and time barriers")
 st.markdown("- Engage community leaders and local organizations")
