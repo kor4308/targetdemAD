@@ -115,5 +115,103 @@ if disease == "Alzheimer's":
 
 col2, col3 = st.columns([1, 1])
 
-# (continued...)
-# Code after this block continues unchanged
+# Determine U.S. total population and disease population
+if disease in ["Alzheimer's", "Alzheimer's disease"]:
+    US_TOTAL_POP = 55792501
+    current_us = US_65PLUS
+else:
+    US_TOTAL_POP = 342_000_000
+    current_us = US_CENSUS
+
+pop_key = f"{disease}_65+" if disease == "Alzheimer's" else disease
+
+target = ALZHEIMERS_TARGET if disease == "Alzheimer's" else BIPOLAR_TARGET if disease == "Bipolar Disorder" else SCHIZOPHRENIA_TARGET
+
+race_categories = list(target["Race"].keys())
+
+total_disease_pop = DISEASE_TOTALS.get(pop_key, US_TOTAL_POP)
+
+with col2:
+    with st.expander("Target Enrollment Inputs"):
+        total_enroll = st.number_input("Total Enrollment Target", min_value=100, max_value=1000000, value=1000, step=100, key="total_enroll")
+
+        gender_total = 0
+        st.markdown("**Gender Target % and Screen Success**")
+        st.caption("Target % comes from disease population and screen success information, doi: 10.1001/jamanetworkopen.2021.14364, although does not include all races (such as missing NHPI and AIAN)")
+        for key, value in target["Gender"].items():
+            cols = st.columns([2, 2])
+            with cols[0]:
+                st.number_input(f"{key} (%)", min_value=0.0, max_value=100.0, value=value, step=0.1, key=f"gender_{key}")
+                updated_val = st.session_state.get(f"gender_{key}", value)
+                gender_total += updated_val
+                st.caption(f"Targeting {int(total_enroll * (updated_val / 100)):,} {key} participants")
+            with cols[1]:
+                default_success = DISEASE_PREVALENCE["Alzheimer's"].get("screen_success", {}).get(key, 0.5) * 100
+                st.number_input("Screen Success %", min_value=0.0, max_value=100.0, value=default_success, step=1.0, key=f"sf_gender_{key}")
+
+        if abs(gender_total - 100.0) > 0.01:
+            st.markdown(f":red[Total Gender %: {gender_total:.1f}%]")
+        else:
+            st.markdown(f":green[Total Gender %: {gender_total:.1f}%]")
+
+        st.markdown("**Race Target % and Screen Success**")
+        race_total = 0
+        for key, value in target["Race"].items():
+            cols = st.columns([2, 2])
+            with cols[0]:
+                st.number_input(f"{key} (%)", min_value=0.0, max_value=100.0, value=value, step=0.1, key=f"race_{key}")
+                updated_val = st.session_state.get(f"race_{key}", value)
+                race_total += updated_val
+                if key == "Other":
+                    st.caption(f"Targeting {int(total_enroll * (updated_val / 100)):,} participants from other or multiple races")
+                else:
+                    st.caption(f"Targeting {int(total_enroll * (updated_val / 100)):,} {key} participants")
+            with cols[1]:
+                default_success = DISEASE_PREVALENCE["Alzheimer's"].get("screen_success", {}).get(key, 0.5) * 100
+                st.number_input("Screen Success %", min_value=0.0, max_value=100.0, value=default_success, step=1.0, key=f"sf_race_{key}")
+
+        if abs(race_total - 100.0) > 0.01:
+            st.markdown(f":red[Total Race %: {race_total:.1f}%]")
+        else:
+            st.markdown(f":green[Total Race %: {race_total:.1f}%]")
+
+with col3:
+    with st.expander("📍 Current Enrollment (Count)"):
+        if trial == "Reveli" and time_period == "August 2025":
+            current_gender_male = 400
+            current_gender_female = 100
+            current_gender_diverse = 1000 - current_gender_male - current_gender_female
+            current_race = {
+                "Hispanic": 199,
+                "White, NH": 500,
+                "African American": 180,
+                "Asian, NH": 5,
+                "AIAN, NH": 7,
+                "NHPI, NH": 2,
+                "Other": 8
+            }
+        elif trial == "Reveli" and time_period == "January 2026":
+            current_gender_male = 360
+            current_gender_female = 640
+            current_gender_diverse = 1000 - current_gender_male - current_gender_female
+            current_race = {
+                "Hispanic": 212,
+                "White, NH": 517,
+                "African American": 192,
+                "Asian, NH": 59,
+                "AIAN, NH": 8,
+                "NHPI, NH": 3,
+                "Other": 9
+            }
+        else:
+            current_gender_male = st.number_input("Current Male Count", 0, value=450, key="current_male")
+            current_gender_female = st.number_input("Current Female Count", 0, value=450, key="current_female")
+            current_gender_diverse = 1000 - current_gender_male - current_gender_female
+            st.markdown(f"Current Gender-Diverse Count: **{current_gender_diverse}**")
+            st.caption(f"{(current_gender_diverse / 1000) * 100:.1f}%")
+            st.subheader("Race Distribution")
+            current_race = {}
+            for race in race_categories:
+                current_race[race] = st.number_input(f"Current {race} Count", 0, value=80, key=f"c_{race}")
+                percent_val = (current_race[race] / 1000) * 100
+                st.caption(f"{percent_val:.1f}%")
