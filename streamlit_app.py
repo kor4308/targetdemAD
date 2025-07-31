@@ -290,6 +290,7 @@ st.markdown("### Hispanic Recruitment Strategies")
 st.markdown("- Use Spanish-language materials and bilingual coordinators")
 st.markdown("- Partner with local Hispanic/Latino organizations and clinics")
 st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring as these can be barriers.")
+st.markdown("""
 <details>
 <summary><strong>Sources</strong></summary>
 <ul>
@@ -300,8 +301,10 @@ st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring as
 
 <details>
 <summary><strong>Solutions</strong></summary>
-Consider a switch of inclusion/exclusion to Montreal Cognitive Assessment (MoCA).
+Consider a switch of inclusion/exclusion to Montreal Cognitive Assessment (MoCA).<br>
+<strong>Sources:</strong> <a href='https://pmc.ncbi.nlm.nih.gov/articles/PMC4562190/' target='_blank'>PMC Article</a>
 </details>
+""", unsafe_allow_html=True)
 
 st.markdown("### Female Recruitment Strategies")
 st.markdown("- Connect with women's health networks and caregiving support groups")
@@ -312,6 +315,7 @@ st.markdown("### African American Recruitment Strategies")
 st.markdown("- Engage trusted faith-based and civic leaders")
 st.markdown("- Highlight historical medical distrust and steps taken to ensure ethical practices")
 st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring inclusion criteria as these can be inequitable barriers.")
+st.markdown("""
 <details>
 <summary><strong>Sources</strong></summary>
 <ul>
@@ -322,11 +326,12 @@ st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring in
 
 <details>
 <summary><strong>Solutions</strong></summary>
-Consider a switch of inclusion/exclusion to Montreal Cognitive Assessment (MoCA).
+Consider a switch of inclusion/exclusion to Montreal Cognitive Assessment (MoCA).<br>
+<strong>Sources:</strong> <a href='https://pmc.ncbi.nlm.nih.gov/articles/PMC4562190/' target='_blank'>PMC Article</a>
 </details>
+""", unsafe_allow_html=True)
 
 st.markdown("### Other Recruitment Strategies")
 st.markdown("- Culturally tailored materials")
 st.markdown("- Address transportation and time barriers")
 st.markdown("- Engage community leaders and local organizations")
-
