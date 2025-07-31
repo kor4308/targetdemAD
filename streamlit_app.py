@@ -285,6 +285,21 @@ st.subheader("General Motivators and Barriers for (Select)")
 st.markdown("### Asian Recruitment Strategies")
 st.markdown("- Leverage trusted community centers and Asian language media")
 st.markdown("- Emphasize that memory loss is not just a part of the aging process")
+st.markdown("""
+<details>
+<summary><strong>Sources</strong></summary>
+<ul>
+<li><a href='https://www.alz.org/help-support/resources/asian-americans-and-alzheimers' target='_blank'>Alzheimer's Association - Asian Americans</a></li>
+<li><a href='https://www.sciencedirect.com/science/article/pii/S1064748112605697' target='_blank'>ScienceDirect Article</a></li>
+</ul>
+</details>
+
+<details>
+<summary><strong>Solutions</strong></summary>
+<a href='https://www.canva.com/design/DAGuITbntEI/jfZ6fArnWEWgH-KC9V2BNA/view?utm_content=DAGuITbntEI&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf3030029bc' target='_blank'>Canva Visual Solution</a>
+</details>
+""", unsafe_allow_html=True)
+
 
 st.markdown("### Hispanic Recruitment Strategies")
 st.markdown("- Use Spanish-language materials and bilingual coordinators")
