@@ -289,7 +289,7 @@ st.markdown("- Emphasize that memory loss is not just a part of the aging proces
 st.markdown("### Hispanic Recruitment Strategies")
 st.markdown("- Use Spanish-language materials and bilingual coordinators")
 st.markdown("- Partner with local Hispanic/Latino organizations and clinics")
-st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring as these can be barriers.
+st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring as these can be barriers.")
 
 <details>
 <summary><strong>Sources</strong></summary>
@@ -313,7 +313,7 @@ st.markdown("- Provide flexible study visit schedules or caregiver support")
 st.markdown("### African American Recruitment Strategies")
 st.markdown("- Engage trusted faith-based and civic leaders")
 st.markdown("- Highlight historical medical distrust and steps taken to ensure ethical practices")
-st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring inclusion criteria as these can be inequitable barriers.
+st.markdown("- Avoid or reassess the need for MMSE and logical memory scoring inclusion criteria as these can be inequitable barriers.")
 
 <details>
 <summary><strong>Sources</strong></summary>
